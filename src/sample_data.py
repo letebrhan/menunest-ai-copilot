@@ -236,11 +236,12 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     cuisine_lower = cuisine.lower()
     location_city = location.split(",")[0].strip()
     
-    # Adapt business summary
+    # Adapt business summary with dietary focus
+    dietary_text = _get_dietary_focus_text(dietary_focus)
     business_summary = (
         f"A {cuisine} {business_type.lower()} targeting {target_customers.lower() if target_customers else 'local customers'} "
         f"in {location}. The concept focuses on delivering authentic flavors with efficient operations, "
-        f"offering a curated menu that balances quality, speed, and profitability."
+        f"offering a curated menu that balances quality, speed, and profitability{dietary_text}."
     )
     
     # Adapt positioning based on cuisine and business type
@@ -260,6 +261,10 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
         next((k for k in positioning_templates if k in cuisine_lower), ""),
         f"Unique {cuisine} experience in {location_city}, offering authentic flavors and quality service to discerning customers."
     )
+    
+    # Add dietary focus to positioning if specified
+    if dietary_focus:
+        positioning += " " + _get_dietary_positioning_addition(dietary_focus)
     
     # Calculate dynamic readiness score based on multiple factors
     launch_readiness_score = _calculate_readiness_score(
@@ -288,7 +293,7 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Adapt customer segment
     best_customer_segment = target_customers.split(",")[0].strip() if target_customers else "Local food enthusiasts"
     
-    # Adapt key recommendation based on business type and budget
+    # Adapt key recommendation based on business type, budget, and dietary focus
     if "under 5,000" in budget.lower():
         key_recommendation = (
             f"Start with a minimal viable product approach—focus on 3-5 signature items that can be prepared "
@@ -309,16 +314,26 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
             f"Use this period to optimize pricing, portions, and service flow before your official grand opening."
         )
     
+    # Add dietary-specific recommendation if applicable
+    dietary_recommendation = _get_dietary_recommendation(dietary_focus)
+    if dietary_recommendation:
+        key_recommendation += " " + dietary_recommendation
+    
     # Generate adapted menu items based on cuisine
     menu_items = _generate_menu_items(cuisine, dietary_focus)
     
-    # Generate adapted risks
+    # Generate adapted risks with dietary considerations
     main_risks = [
         f"Market awareness of {cuisine} cuisine in {location_city} may require customer education and marketing investment",
         f"Operational challenges during peak hours could impact service quality and customer satisfaction",
         f"Ingredient sourcing for authentic {cuisine} items may affect costs or require supplier relationships",
         f"Seasonal demand fluctuations typical in {location_city} may impact revenue consistency",
     ]
+    
+    # Add dietary-specific risks
+    dietary_risks = _get_dietary_risks(dietary_focus)
+    if dietary_risks:
+        main_risks.extend(dietary_risks)
     
     # Generate next steps
     next_steps = [
@@ -353,6 +368,86 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def _get_dietary_focus_text(dietary_focus: list) -> str:
+    """Generate text snippet for dietary focus in business summary."""
+    if not dietary_focus:
+        return ""
+    
+    focus_map = {
+        "Vegetarian-friendly": ", with vegetarian options",
+        "Vegan-friendly": ", with plant-based options",
+        "Gluten-free options": ", including gluten-free choices",
+        "Halal-friendly": ", following halal standards",
+        "Healthy meals": ", emphasizing nutritious ingredients",
+        "Affordable meals": ", at accessible price points",
+        "Premium experience": ", with premium quality focus",
+    }
+    
+    # Get first 2 dietary focuses for summary
+    focuses = [focus_map.get(f, "") for f in dietary_focus[:2] if f in focus_map]
+    if focuses:
+        return "".join(focuses)
+    return ""
+
+
+def _get_dietary_positioning_addition(dietary_focus: list) -> str:
+    """Generate positioning addition based on dietary focus."""
+    if not dietary_focus:
+        return ""
+    
+    # Check for specific dietary requirements
+    if any("vegan" in f.lower() for f in dietary_focus):
+        return "Committed to 100% plant-based ingredients, proving that vegan food can be both delicious and satisfying."
+    elif any("vegetarian" in f.lower() for f in dietary_focus):
+        return "Offering extensive vegetarian options that celebrate vegetables, grains, and dairy without compromising on flavor."
+    elif any("gluten-free" in f.lower() for f in dietary_focus):
+        return "Providing safe gluten-free options with dedicated preparation areas to prevent cross-contamination."
+    elif any("halal" in f.lower() for f in dietary_focus):
+        return "Ensuring all ingredients meet halal standards with certified suppliers and proper handling procedures."
+    elif any("healthy" in f.lower() for f in dietary_focus):
+        return "Focusing on nutritious, wholesome ingredients that support a healthy lifestyle without sacrificing taste."
+    
+    return ""
+
+
+def _get_dietary_recommendation(dietary_focus: list) -> str:
+    """Generate dietary-specific recommendation."""
+    if not dietary_focus:
+        return ""
+    
+    if any("vegan" in f.lower() for f in dietary_focus):
+        return "Clearly label all menu items as vegan and train staff to answer questions about ingredients and preparation methods."
+    elif any("vegetarian" in f.lower() for f in dietary_focus):
+        return "Ensure vegetarian items are clearly marked and prepared separately from meat products to avoid cross-contamination."
+    elif any("gluten-free" in f.lower() for f in dietary_focus):
+        return "Implement strict gluten-free protocols including separate prep areas, utensils, and storage to ensure safety for celiac customers."
+    elif any("halal" in f.lower() for f in dietary_focus):
+        return "Establish relationships with certified halal suppliers and maintain documentation to verify compliance with halal standards."
+    
+    return ""
+
+
+def _get_dietary_risks(dietary_focus: list) -> list[str]:
+    """Generate dietary-specific risks."""
+    risks = []
+    
+    if any("vegan" in f.lower() for f in dietary_focus):
+        risks.append("Sourcing high-quality plant-based ingredients may be more expensive or require specialized suppliers")
+        risks.append("Customer education may be needed to overcome misconceptions about vegan food being bland or unsatisfying")
+    
+    if any("vegetarian" in f.lower() for f in dietary_focus):
+        risks.append("Ensuring clear separation between vegetarian and non-vegetarian prep areas requires careful kitchen workflow design")
+    
+    if any("gluten-free" in f.lower() for f in dietary_focus):
+        risks.append("Maintaining gluten-free standards requires rigorous staff training and may increase operational complexity")
+        risks.append("Cross-contamination risks require dedicated equipment and storage, increasing startup costs")
+    
+    if any("halal" in f.lower() for f in dietary_focus):
+        risks.append("Halal certification and supplier verification may add costs and limit ingredient sourcing options")
+        risks.append("Staff training on halal requirements is essential to maintain compliance and customer trust")
+    
+    # Limit to 2 additional risks to avoid overwhelming the list
+    return risks[:2]
 
 def _calculate_readiness_score(
     business_idea: str,
@@ -652,7 +747,87 @@ def _generate_menu_items(cuisine: str, dietary_focus: list) -> list[dict[str, An
             "operational_tip": "Offer combo deals with main dishes.",
         })
     
+    # Adapt menu items based on dietary focus
+    items = _adapt_menu_for_dietary_focus(items, dietary_focus)
+    
     return items[:6]  # Return up to 6 items
+
+
+def _adapt_menu_for_dietary_focus(items: list[dict[str, Any]], dietary_focus: list) -> list[dict[str, Any]]:
+    """Adapt menu items based on dietary focus requirements."""
+    if not dietary_focus:
+        return items
+    
+    is_vegan = any("vegan" in d.lower() for d in dietary_focus)
+    is_vegetarian = any("vegetarian" in d.lower() for d in dietary_focus)
+    is_gluten_free = any("gluten-free" in d.lower() or "gluten free" in d.lower() for d in dietary_focus)
+    is_halal = any("halal" in d.lower() for d in dietary_focus)
+    
+    adapted_items = []
+    
+    for item in items:
+        adapted_item = dict(item)
+        
+        # For vegan focus, modify non-vegan items
+        if is_vegan:
+            # Replace dairy and animal products
+            if "Mozzarella" in adapted_item.get("ingredients", []):
+                adapted_item["name"] = adapted_item["name"].replace("Margherita", "Vegan Margherita")
+                adapted_item["description"] = adapted_item["description"].replace("mozzarella", "vegan mozzarella")
+                adapted_item["ingredients"] = [ing.replace("Mozzarella", "Vegan mozzarella") for ing in adapted_item["ingredients"]]
+                adapted_item["allergens"] = [a for a in adapted_item.get("allergens", []) if "dairy" not in a.lower()]
+                adapted_item["preparation_note"] += " Use plant-based cheese alternative."
+            
+            if "Eggs" in adapted_item.get("ingredients", []) or "Butter" in adapted_item.get("ingredients", []):
+                # Skip non-veganizable items or adapt them
+                if "Carbonara" in adapted_item["name"]:
+                    adapted_item["name"] = "Vegan Pasta"
+                    adapted_item["description"] = "Pasta with creamy cashew sauce, vegetables, and nutritional yeast."
+                    adapted_item["ingredients"] = ["Pasta", "Cashews", "Nutritional yeast", "Vegetables", "Olive oil"]
+                    adapted_item["allergens"] = ["Gluten", "Tree nuts (cashews)"]
+                elif "Chicken" in adapted_item["name"]:
+                    adapted_item["name"] = "Chickpea Curry"
+                    adapted_item["description"] = "Hearty chickpea curry in rich tomato-based sauce."
+                    adapted_item["ingredients"] = ["Chickpeas", "Tomatoes", "Coconut milk", "Spices", "Rice or naan"]
+                    adapted_item["allergens"] = ["Gluten (if served with naan)"]
+                    adapted_item["preparation_note"] = "Use coconut milk for creamy texture."
+        
+        # For vegetarian focus, remove meat items
+        elif is_vegetarian:
+            meat_keywords = ["pork", "chicken", "beef", "fish", "meat", "guanciale"]
+            if any(keyword in adapted_item["name"].lower() or
+                   any(keyword in ing.lower() for ing in adapted_item.get("ingredients", []))
+                   for keyword in meat_keywords):
+                # Replace with vegetarian alternative
+                if "Tacos" in adapted_item["name"]:
+                    adapted_item["name"] = "Vegetarian Tacos"
+                    adapted_item["description"] = "Seasoned black beans and vegetables with fresh toppings."
+                    adapted_item["ingredients"] = ["Corn tortillas", "Black beans", "Vegetables", "Cilantro", "Onion", "Spices"]
+                elif "Carbonara" in adapted_item["name"]:
+                    adapted_item["name"] = "Vegetarian Pasta"
+                    adapted_item["description"] = "Pasta with creamy sauce, mushrooms, and parmesan."
+                    adapted_item["ingredients"] = ["Pasta", "Mushrooms", "Cream", "Parmesan", "Black pepper"]
+                elif "Chicken" in adapted_item["name"]:
+                    adapted_item["name"] = "Paneer Tikka Masala"
+                    adapted_item["description"] = "Indian cottage cheese in creamy tomato-based curry sauce."
+                    adapted_item["ingredients"] = ["Paneer", "Tomatoes", "Cream", "Butter", "Spices", "Rice or naan"]
+        
+        # For gluten-free focus, add notes about gluten-free options
+        if is_gluten_free:
+            if "Gluten" in adapted_item.get("allergens", []):
+                adapted_item["name"] += " (GF option available)"
+                adapted_item["preparation_note"] += " Gluten-free version available with dedicated prep area to prevent cross-contamination."
+                adapted_item["allergens"].append("Prepared in facility that handles gluten")
+        
+        # For halal focus, add halal certification notes
+        if is_halal:
+            if any(meat in adapted_item["name"].lower() for meat in ["chicken", "beef", "lamb", "meat"]):
+                adapted_item["preparation_note"] += " All meat sourced from halal-certified suppliers."
+                adapted_item["operational_tip"] += " Maintain halal certification documentation."
+        
+        adapted_items.append(adapted_item)
+    
+    return adapted_items
 
 
 def _generate_customer_personas(target_customers: str, location: str, cuisine: str) -> list[dict[str, Any]]:
