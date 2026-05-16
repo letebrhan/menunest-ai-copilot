@@ -296,58 +296,82 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       DASHBOARD METRICS - RESPONSIVE
+       DASHBOARD METRICS - SOFT MODERN CARDS
        ============================================ */
     
-    /* Metric containers with warm orange accent */
+    /* Metric containers with soft cream/peach background */
     [data-testid="stMetric"] {
-        background: white;
-        padding: 1.2rem;
-        border-radius: 0.8rem;
-        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.1);
-        border: 2px solid rgba(255, 152, 0, 0.2);
+        background: linear-gradient(135deg, #fff9f5 0%, #fef6f0 100%);
+        padding: 1.5rem 1.25rem;
+        border-radius: 1rem;
+        box-shadow: 0 2px 12px rgba(255, 152, 0, 0.08);
+        border-top: 3px solid #ff9800;
+        border-left: 1px solid rgba(255, 152, 0, 0.15);
+        border-right: 1px solid rgba(255, 152, 0, 0.15);
+        border-bottom: 1px solid rgba(255, 152, 0, 0.15);
         transition: all 0.3s ease;
-        animation: pulse 2s ease-in-out infinite;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    /* Subtle accent line on left */
+    [data-testid="stMetric"]::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: linear-gradient(180deg, #ff9800 0%, #ff6f00 100%);
+        opacity: 0.6;
     }
     
     [data-testid="stMetric"]:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(255, 152, 0, 0.25);
-        border-color: #ff9800;
-        animation: none;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.15);
+        border-top-color: #ff6f00;
     }
     
-    /* Metric labels - responsive with subtle orange */
+    [data-testid="stMetric"]:hover::before {
+        opacity: 1;
+    }
+    
+    /* Metric labels - small, clean, uppercase */
     [data-testid="stMetric"] label {
-        font-size: clamp(0.75rem, 1.2vw, 0.9rem) !important;
+        font-size: clamp(0.7rem, 1.1vw, 0.8rem) !important;
         font-weight: 600 !important;
-        color: #666 !important;
+        color: #888 !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
-        line-height: 1.3 !important;
+        line-height: 1.4 !important;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.8px;
+        margin-bottom: 0.5rem !important;
+        display: block !important;
     }
     
-    /* Metric values - responsive with dark text */
+    /* Metric values - large, readable, balanced */
     [data-testid="stMetric"] [data-testid="stMetricValue"] {
-        font-size: clamp(1.2rem, 2.5vw, 1.8rem) !important;
+        font-size: clamp(1.5rem, 3vw, 2.2rem) !important;
         font-weight: 700 !important;
         color: #2d3748 !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
         line-height: 1.2 !important;
+        margin: 0.25rem 0 !important;
     }
     
-    /* Metric delta/description */
+    /* Metric delta/description - clean wrap */
     [data-testid="stMetric"] > div:last-child {
-        font-size: clamp(0.8rem, 1.3vw, 0.95rem) !important;
+        font-size: clamp(0.8rem, 1.2vw, 0.9rem) !important;
         margin-top: 0.5rem !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         color: #666 !important;
+        line-height: 1.5 !important;
+        font-weight: 500 !important;
     }
     
     /* ============================================
