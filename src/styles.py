@@ -594,12 +594,34 @@ def get_custom_css() -> str:
         display: block !important;
     }
     
-    /* Form field containers with consistent spacing */
+    /* Form field containers with consistent spacing and bottom padding */
     .stTextInput,
     .stTextArea,
     .stSelectbox,
     .stMultiSelect {
-        margin-bottom: 1.1rem !important;
+        margin-bottom: 1.5rem !important;
+        padding-bottom: 0.25rem !important;
+    }
+    
+    /* Ensure last field in each column has adequate bottom space */
+    .stTextInput:last-of-type,
+    .stTextArea:last-of-type,
+    .stSelectbox:last-of-type,
+    .stMultiSelect:last-of-type {
+        margin-bottom: 2rem !important;
+    }
+    
+    /* Form columns should have consistent width and alignment */
+    [data-testid="column"] {
+        padding: 0 0.5rem !important;
+    }
+    
+    [data-testid="column"]:first-child {
+        padding-left: 0 !important;
+    }
+    
+    [data-testid="column"]:last-child {
+        padding-right: 0 !important;
     }
     
     /* Help text / captions */
