@@ -1,0 +1,327 @@
+# MenuNest: AI Copilot for Food Entrepreneurs
+
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Streamlit](https://img.shields.io/badge/Built%20with-Streamlit-red)
+![Hackathon](https://img.shields.io/badge/IBM%20Bob-Hackathon-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
+
+MenuNest is an AI-powered web application that helps food entrepreneurs turn an early food business idea into a practical launch plan. It generates a market-ready menu, ingredient plan, pricing suggestions, customer personas, marketing content, and a launch checklist.
+
+## Problem
+
+Starting a food business is exciting, but many entrepreneurs struggle to move from a food idea to a practical launch plan. They may have recipes, culture, passion, and local demand, but they often lack support with menu planning, pricing, ingredient organization, marketing, and launch validation.
+
+Without a clear plan, founders risk wasting money on the wrong menu, unclear pricing, poor positioning, or weak customer testing.
+
+## Solution
+
+MenuNest acts as an AI copilot for food entrepreneurs. From a simple food business idea, it generates a structured launch package that includes:
+
+- Menu ideas
+- Ingredient planning
+- Pricing suggestions
+- Customer personas
+- Marketing content
+- Launch checklist
+- First-week validation plan
+
+MenuNest helps founders move from:
+
+> I have a food idea.
+
+to:
+
+> I have a menu, pricing plan, marketing content, and launch checklist.
+
+## Target Users
+
+MenuNest is designed for food entrepreneurs who want to launch or test a food business idea without hiring expensive consultants.
+
+Initial users include:
+
+- Cafe founders
+- Coffee kiosk owners
+- Catering businesses
+- Food truck operators
+- Home chefs
+- Small restaurant founders
+- Cultural and immigrant food entrepreneurs
+- Local market vendors
+
+The first demo focuses on food entrepreneurs in Italy and Europe, but the platform can later expand to larger restaurants, multi-location brands, food product companies, and startup incubators.
+
+## Key Features
+
+### 1. Business Idea Input
+
+Users enter their food concept, business type, cuisine, location, budget, target customers, dietary focus, and launch goal.
+
+### 2. AI Menu Generator
+
+MenuNest generates 5 to 8 starter menu items with descriptions, categories, complexity levels, and suggested price ranges.
+
+### 3. Ingredient and Allergen Plan
+
+For each menu item, MenuNest suggests main ingredients, common allergens, preparation notes, and operational tips.
+
+### 4. Pricing Suggestions
+
+MenuNest provides approximate price ranges and pricing notes to help entrepreneurs start with realistic pricing assumptions.
+
+### 5. Customer Personas
+
+The app generates likely customer profiles, their needs, and recommended offers.
+
+### 6. Marketing Content
+
+MenuNest creates a slogan, Instagram bio, social media captions, and launch announcement.
+
+### 7. Launch Checklist
+
+The app generates practical steps for menu validation, marketing setup, operations, and first-week testing.
+
+### 8. Exportable Report
+
+Users can export the generated launch plan as Markdown or JSON.
+
+## Example Use Case
+
+Input:
+
+```text
+Business idea: I want to launch an Ethiopian coffee and breakfast kiosk.
+Business type: Coffee kiosk
+Cuisine: Ethiopian / East African
+Location: Milan, Italy
+Budget: 5,000-10,000 EUR
+Target customers: Office workers, students, commuters
+Launch goal: Start with a simple menu and test customer interest
+```
+
+Output:
+
+```text
+Suggested menu:
+- Ethiopian coffee
+- Spiced tea
+- Sambusa
+- Ful breakfast bowl
+- Injera breakfast wrap
+- Lentil bowl
+
+Pricing:
+- Coffee: 2.00-2.80 EUR
+- Sambusa: 2.50-3.50 EUR
+- Breakfast combo: 5.50-7.50 EUR
+
+Marketing:
+Authentic East African breakfast for Milan mornings.
+
+Launch checklist:
+- Test 5 core menu items
+- Calculate ingredient cost per item
+- Prepare allergen notes
+- Create Instagram page
+- Validate pricing with early customers
+```
+
+## Tech Stack
+
+- Python
+- Streamlit
+- Pydantic
+- Pandas
+- JSON
+- Markdown export
+- Optional LLM API integration
+- IBM Bob for AI-assisted development workflow
+
+## Architecture
+
+```text
+User
+ |
+ v
+Streamlit UI
+ |
+ v
+Prompt Builder
+ |
+ v
+AI Generator
+ |
+ v
+JSON Validator
+ |
+ v
+Report Renderer
+ |
+ v
+Markdown / JSON Export
+```
+
+## How IBM Bob Was Used
+
+IBM Bob was used as a development partner during the hackathon. It supported:
+
+- Product workflow design
+- Project structure planning
+- Streamlit prototype development
+- Prompt and JSON schema design
+- Debugging
+- Test creation
+- README and documentation preparation
+- Repository organization
+
+The exported IBM Bob development report should be included in the `bob_reports/` folder.
+
+
+## Built with IBM Bob
+
+MenuNest was built for the IBM Bob Hackathon using IBM Bob as the AI-powered development partner.
+
+IBM Bob helped accelerate the full software development workflow, including:
+
+- Turning the initial product idea into a clear MVP
+- Designing the GitHub repository structure
+- Creating the Streamlit application flow
+- Building modular Python files for prompts, validation, rendering, and export
+- Improving the UI layout and demo reliability
+- Creating fallback demo data for stable judging
+- Writing tests for prompt building, validation, export, and AI response parsing
+- Preparing README documentation and submission notes
+
+This project demonstrates how IBM Bob can support a developer across the full development cycle, from planning and implementation to debugging, testing, documentation, and final submission.
+
+
+## Project Structure
+
+```text
+menunest-ai-copilot/
+├── README.md
+├── app.py
+├── requirements.txt
+├── .env.example
+├── .gitignore
+├── LICENSE
+├── src/
+│   ├── __init__.py
+│   ├── config.py
+│   ├── prompt_builder.py
+│   ├── ai_generator.py
+│   ├── validators.py
+│   ├── report_renderer.py
+│   ├── export_utils.py
+│   └── sample_data.py
+├── tests/
+├── reports/
+├── bob_reports/
+├── screenshots/
+├── presentation/
+└── docs/
+```
+
+## How to Run Locally
+
+Clone the repository:
+
+```bash
+git clone https://github.com/your-username/menunest-ai-copilot.git
+cd menunest-ai-copilot
+```
+
+Create and activate a virtual environment:
+
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+On Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create your environment file:
+
+```bash
+cp .env.example .env
+```
+
+Run the app:
+
+```bash
+streamlit run app.py
+```
+
+## Demo Mode
+
+MenuNest includes fallback sample data, so the demo can run even if the AI API is not configured.
+
+Set this in `.env`:
+
+```text
+LLM_PROVIDER=demo
+```
+
+## Deployment
+
+The MVP can be deployed on Streamlit Community Cloud.
+
+Recommended deployment steps:
+
+1. Push the repository to GitHub.
+2. Go to Streamlit Community Cloud.
+3. Connect your GitHub repository.
+4. Select `app.py` as the entry file.
+5. Add environment variables if using an AI API.
+6. Deploy and copy the public app URL.
+
+## Screenshots
+
+Add screenshots after running the app:
+
+```markdown
+![Home](screenshots/home.png)
+![Dashboard](screenshots/dashboard.png)
+![Report](screenshots/report.png)
+```
+
+## Business Value
+
+MenuNest helps food entrepreneurs validate ideas before spending heavily on rent, equipment, ingredients, and marketing. It reduces early planning friction and gives founders a practical first version of their menu, pricing, positioning, and launch plan.
+
+## Future Roadmap
+
+- PDF report export
+- Multi-language support for Italy and Europe
+- Italy/EU food compliance checklist
+- More accurate food cost calculator
+- Supplier and ingredient database
+- Competitor and location analysis
+- Saved user projects
+- Restaurant POS or inventory integration
+- Team collaboration features
+- SaaS subscription model
+
+## Team
+
+Built for the IBM Bob Hackathon.
+
+Team members:
+
+- Letebrhan Alemayoh Siyum
+- Team member 2
+- Team member 3
+- Team member 4
+
+## License
+
+This project is released under the MIT License.

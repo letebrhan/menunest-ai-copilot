@@ -1,0 +1,14 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+venv/
+.DS_Store
+.streamlit/secrets.toml
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IBM Bob temporary files
+bob_sessions/tmp/
+bob_sessions/drafts/
