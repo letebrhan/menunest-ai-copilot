@@ -42,9 +42,16 @@ def get_custom_css() -> str:
         }
     }
     
-    /* Apply fade-in to main content */
+    /* Overall page background - warm cream color */
+    .stApp {
+        background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
+    }
+    
+    /* Main content area with fade-in animation */
     .main .block-container {
         animation: fadeIn 0.6s ease-out;
+        background-color: transparent;
+        padding: 2rem 1rem;
     }
     
     /* ============================================
@@ -86,7 +93,7 @@ def get_custom_css() -> str:
         padding: 2rem;
         border-radius: 1rem;
         margin-bottom: 2rem;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
         animation: fadeIn 0.8s ease-out;
     }
     
@@ -102,37 +109,83 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
+       FORM SECTION STYLING
+       ============================================ */
+    
+    /* Form container background */
+    .stForm {
+        background: white;
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 152, 0, 0.1);
+    }
+    
+    /* Form section header */
+    .main h2 {
+        color: #2d3748;
+        border-bottom: 3px solid #ff9800;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+    }
+    
+    /* Form subheaders */
+    .stForm h4 {
+        color: #ff9800;
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    
+    /* ============================================
+       DASHBOARD SECTION STYLING
+       ============================================ */
+    
+    /* Dashboard section background */
+    .main h2:first-of-type {
+        background: white;
+        padding: 1.5rem;
+        border-radius: 1rem 1rem 0 0;
+        margin-bottom: 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 4px solid #ff9800;
+    }
+    
+    /* ============================================
        DASHBOARD METRICS - RESPONSIVE
        ============================================ */
     
-    /* Metric containers */
+    /* Metric containers with warm orange accent */
     [data-testid="stMetric"] {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        background: white;
         padding: 1.2rem;
         border-radius: 0.8rem;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.1);
+        border: 2px solid rgba(255, 152, 0, 0.2);
         transition: all 0.3s ease;
         animation: pulse 2s ease-in-out infinite;
     }
     
     [data-testid="stMetric"]:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        box-shadow: 0 8px 20px rgba(255, 152, 0, 0.25);
+        border-color: #ff9800;
         animation: none;
     }
     
-    /* Metric labels - responsive */
+    /* Metric labels - responsive with warm color */
     [data-testid="stMetric"] label {
         font-size: clamp(0.75rem, 1.2vw, 0.9rem) !important;
         font-weight: 600 !important;
-        color: #4a5568 !important;
+        color: #ff9800 !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
         line-height: 1.3 !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     
-    /* Metric values - responsive */
+    /* Metric values - responsive with dark text */
     [data-testid="stMetric"] [data-testid="stMetricValue"] {
         font-size: clamp(1.2rem, 2.5vw, 1.8rem) !important;
         font-weight: 700 !important;
@@ -149,24 +202,27 @@ def get_custom_css() -> str:
         margin-top: 0.5rem !important;
         white-space: normal !important;
         word-wrap: break-word !important;
+        color: #666 !important;
     }
     
     /* ============================================
        TABS STYLING & ANIMATION
        ============================================ */
     
-    /* Tab container */
+    /* Tab container with warm background */
     .stTabs {
-        background-color: #f8f9fa;
+        background-color: white;
         border-radius: 0.8rem;
-        padding: 1rem;
+        padding: 1.5rem;
         margin-top: 1rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(255, 152, 0, 0.1);
     }
     
     /* Tab buttons */
     .stTabs [data-baseweb="tab-list"] {
         gap: 0.5rem;
-        background-color: white;
+        background-color: #faf8f3;
         border-radius: 0.6rem;
         padding: 0.5rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
@@ -181,86 +237,99 @@ def get_custom_css() -> str:
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        color: #666;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        background-color: #f0f2f6;
+        background-color: rgba(255, 152, 0, 0.1);
         transform: translateY(-2px);
+        color: #ff9800;
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%) !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
     }
     
     /* Tab content with animation */
     .stTabs [data-baseweb="tab-panel"] {
         animation: slideIn 0.4s ease-out;
         padding-top: 1.5rem;
+        background-color: white;
     }
     
     /* ============================================
        CONTAINERS & CARDS
        ============================================ */
     
-    /* Bordered containers */
+    /* Bordered containers with warm styling */
     [data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlock"] {
         background-color: white;
         border-radius: 0.8rem;
         padding: 1.5rem;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 152, 0, 0.1);
         transition: box-shadow 0.3s ease;
     }
     
     [data-testid="stVerticalBlock"] > div[data-testid="stVerticalBlock"]:hover {
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 16px rgba(255, 152, 0, 0.15);
+        border-color: rgba(255, 152, 0, 0.2);
     }
     
-    /* Expanders */
+    /* Expanders with warm accent */
     .streamlit-expanderHeader {
-        background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+        background: white;
         border-radius: 0.6rem;
         padding: 1rem;
         font-weight: 600;
         transition: all 0.3s ease;
+        border-left: 4px solid #ff9800;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
     .streamlit-expanderHeader:hover {
-        background: linear-gradient(135deg, #e8eef5 0%, #d9e2ec 100%);
+        background: rgba(255, 152, 0, 0.05);
         transform: translateX(4px);
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.15);
     }
     
     /* ============================================
        BUTTONS & INTERACTIVE ELEMENTS
        ============================================ */
     
-    /* Primary button */
+    /* Primary button with warm orange gradient */
     .stButton > button[kind="primary"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%);
         border: none;
         border-radius: 0.6rem;
         padding: 0.75rem 2rem;
         font-weight: 600;
         font-size: 1.1rem;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        color: white;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
         transition: all 0.3s ease;
     }
     
     .stButton > button[kind="primary"]:hover {
+        background: linear-gradient(135deg, #ff6f00 0%, #e65100 100%);
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
     }
     
-    /* Download buttons */
+    /* Download buttons with orange accent */
     .stDownloadButton > button {
         border-radius: 0.6rem;
         transition: all 0.3s ease;
+        border: 2px solid #ff9800;
+        color: #ff9800;
     }
     
     .stDownloadButton > button:hover {
         transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
+        background-color: rgba(255, 152, 0, 0.05);
     }
     
     /* ============================================
@@ -268,11 +337,18 @@ def get_custom_css() -> str:
        ============================================ */
     
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+        background: linear-gradient(180deg, #faf8f3 0%, #f5f1e8 100%);
     }
     
     [data-testid="stSidebar"] .stMarkdown {
         font-size: 0.95rem;
+        color: #2d3748;
+    }
+    
+    [data-testid="stSidebar"] h3 {
+        color: #ff9800;
+        border-bottom: 2px solid #ff9800;
+        padding-bottom: 0.5rem;
     }
     
     /* ============================================
@@ -283,6 +359,7 @@ def get_custom_css() -> str:
         border-radius: 0.6rem;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(255, 152, 0, 0.1);
     }
     
     /* ============================================
@@ -293,24 +370,25 @@ def get_custom_css() -> str:
         border-radius: 0.6rem;
         border-left: 4px solid;
         animation: slideIn 0.4s ease-out;
+        background-color: white;
     }
     
     /* Success messages */
     [data-baseweb="notification"][kind="success"] {
-        background-color: #d4edda;
-        border-left-color: #28a745;
+        background-color: #e8f5e9;
+        border-left-color: #4caf50;
     }
     
     /* Info messages */
     [data-baseweb="notification"][kind="info"] {
-        background-color: #d1ecf1;
-        border-left-color: #17a2b8;
+        background-color: #e3f2fd;
+        border-left-color: #2196f3;
     }
     
     /* Warning messages */
     [data-baseweb="notification"][kind="warning"] {
-        background-color: #fff3cd;
-        border-left-color: #ffc107;
+        background-color: #fff8e1;
+        border-left-color: #ff9800;
     }
     
     /* ============================================
@@ -318,8 +396,36 @@ def get_custom_css() -> str:
        ============================================ */
     
     .stProgress > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(90deg, #ff9800 0%, #ff6f00 100%);
         border-radius: 1rem;
+    }
+    
+    /* ============================================
+       INPUT FIELDS & FORMS
+       ============================================ */
+    
+    /* Text inputs */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > div {
+        border-color: rgba(255, 152, 0, 0.2);
+        border-radius: 0.5rem;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus,
+    .stSelectbox > div > div > div:focus {
+        border-color: #ff9800;
+        box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.1);
+    }
+    
+    /* Form labels */
+    .stTextInput > label,
+    .stTextArea > label,
+    .stSelectbox > label,
+    .stMultiSelect > label {
+        color: #2d3748;
+        font-weight: 600;
     }
     
     /* ============================================
