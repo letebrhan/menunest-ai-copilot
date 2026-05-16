@@ -471,20 +471,6 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       STREAMLIT TOOLBAR HIDING
-       ============================================ */
-    
-    /* Hide Streamlit toolbar for cleaner demo */
-    header[data-testid="stHeader"] {
-        background-color: transparent;
-    }
-    
-    /* Minimize toolbar visibility */
-    .stDeployButton {
-        visibility: hidden;
-    }
-    
-    /* ============================================
        MOBILE RESPONSIVENESS
        ============================================ */
     

@@ -1,14 +1,22 @@
 [browser]
+# Disable usage statistics collection
 gatherUsageStats = false
 
 [client]
+# Set toolbar to minimal mode for cleaner demo presentation
+# This reduces the toolbar size but keeps all functionality intact
+# The app remains fully deployable on Streamlit Community Cloud
 toolbarMode = "minimal"
+
+# Hide detailed error messages in production/demo mode
+# Errors still appear but without technical stack traces
 showErrorDetails = false
 
 [theme]
+# Custom theme matching MenuNest warm food/business palette
 base = "light"
-primaryColor = "#ff9800"
-backgroundColor = "#faf8f3"
-secondaryBackgroundColor = "#ffffff"
-textColor = "#2d3748"
+primaryColor = "#ff9800"           # Warm orange for buttons and accents
+backgroundColor = "#faf8f3"         # Soft cream page background
+secondaryBackgroundColor = "#ffffff" # White for content cards
+textColor = "#2d3748"              # Dark gray for readable text
 font = "sans serif"
