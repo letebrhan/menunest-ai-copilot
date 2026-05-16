@@ -5,6 +5,7 @@ The data is used in demo mode to ensure reliable operation during presentations
 and when API access is unavailable.
 """
 
+import re
 from typing import Any
 
 SAMPLE_LAUNCH_PLAN = {
@@ -198,6 +199,90 @@ SAMPLE_LAUNCH_PLAN = {
 }
 
 
+def clean_business_idea(business_idea: str) -> str:
+    """Clean and normalize business idea text for professional output.
+    
+    This function:
+    1. Removes common greetings (Hi, Hello, Hey, etc.)
+    2. Normalizes whitespace and newlines
+    3. Removes filler phrases like "I want to", "I would like to"
+    4. Returns a clean, professional concept description
+    
+    Args:
+        business_idea: Raw business idea text from user input
+        
+    Returns:
+        Cleaned business idea text suitable for professional output
+    """
+    if not business_idea:
+        return ""
+    
+    # Normalize whitespace and newlines to single spaces
+    cleaned = re.sub(r'\s+', ' ', business_idea.strip())
+    
+    # Remove common greetings at the start (case-insensitive)
+    greetings = [
+        r'^hi[,\s]+',
+        r'^hello[,\s]+',
+        r'^hey[,\s]+',
+        r'^greetings[,\s]+',
+        r'^good\s+(morning|afternoon|evening)[,\s]+',
+    ]
+    for greeting in greetings:
+        cleaned = re.sub(greeting, '', cleaned, flags=re.IGNORECASE)
+    
+    # Remove filler phrases that don't add value
+    filler_phrases = [
+        r'^i\s+want\s+to\s+',
+        r'^i\s+would\s+like\s+to\s+',
+        r'^i\s+am\s+planning\s+to\s+',
+        r'^i\s+plan\s+to\s+',
+        r'^i\s+wish\s+to\s+',
+        r'^my\s+idea\s+is\s+to\s+',
+        r'^the\s+idea\s+is\s+to\s+',
+    ]
+    for phrase in filler_phrases:
+        cleaned = re.sub(phrase, '', cleaned, flags=re.IGNORECASE)
+    
+    # Capitalize first letter if needed
+    if cleaned and cleaned[0].islower():
+        cleaned = cleaned[0].upper() + cleaned[1:]
+    
+    # Ensure it ends with proper punctuation
+    if cleaned and cleaned[-1] not in '.!?':
+        cleaned += '.'
+    
+    return cleaned.strip()
+
+
+def extract_concept_snippet(business_idea: str, max_words: int = 8) -> str:
+    """Extract a short snippet from business idea for use in text.
+    
+    This avoids showing Python list syntax or overly long text in generated content.
+    
+    Args:
+        business_idea: Cleaned business idea text
+        max_words: Maximum number of words to include
+        
+    Returns:
+        Short, professional snippet of the concept
+    """
+    if not business_idea:
+        return "this concept"
+    
+    # Clean the idea first
+    cleaned = clean_business_idea(business_idea)
+    
+    # Split into words and take first N words
+    words = cleaned.split()
+    if len(words) <= max_words:
+        return cleaned.rstrip('.')
+    
+    # Take first max_words and add ellipsis
+    snippet = ' '.join(words[:max_words])
+    return snippet.rstrip('.') + '...'
+
+
 
 def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     """Generate a demo launch plan that adapts to user inputs.
@@ -212,7 +297,7 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     Returns:
         Launch plan dictionary adapted to user inputs
     """
-    business_idea = user_inputs.get("business_idea", "")
+    business_idea_raw = user_inputs.get("business_idea", "")
     business_type = user_inputs.get("business_type", "Coffee kiosk")
     cuisine = user_inputs.get("cuisine", "Ethiopian / East African")
     location = user_inputs.get("location", "Milan, Italy")
@@ -220,6 +305,9 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     target_customers = user_inputs.get("target_customers", "")
     dietary_focus = user_inputs.get("dietary_focus", [])
     launch_goal = user_inputs.get("launch_goal", "")
+    
+    # Clean the business idea to remove greetings, normalize whitespace, etc.
+    business_idea = clean_business_idea(business_idea_raw)
     
     # Extract key concepts from the Business Idea text
     # This is the PRIMARY source of truth for the plan
@@ -280,7 +368,10 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     
     # Add what makes it different from competitors
     positioning = positioning_base + f"Positioned to serve {target_customers if target_customers else 'local customers'} "
-    positioning += f"who are looking for {business_idea.split()[0:5]} " if len(business_idea.split()) > 5 else ""
+    # Use a clean snippet instead of Python list syntax
+    concept_snippet = extract_concept_snippet(business_idea, max_words=6)
+    if concept_snippet and concept_snippet != "this concept":
+        positioning += f"seeking {concept_snippet} "
     positioning += f"in the {location_city} market."
     
     # Add dietary focus to positioning if specified
@@ -316,7 +407,8 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     
     # Build key recommendation that addresses the SPECIFIC business idea
     # Consider the business idea's unique challenges and opportunities
-    key_recommendation = f"For your {business_idea.strip()}: "
+    concept_snippet = extract_concept_snippet(business_idea, max_words=10)
+    key_recommendation = f"For your {concept_snippet}: "
     
     # Tailor recommendation based on budget AND business idea complexity
     if "under 5,000" in budget.lower():
@@ -390,8 +482,9 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
         main_risks.extend(dietary_risks[:1])  # Add only 1 dietary risk to keep list manageable
     
     # Generate next steps that are ACTIONABLE and SPECIFIC to the business idea
+    concept_snippet = extract_concept_snippet(business_idea, max_words=10)
     next_steps = [
-        f"Conduct market research with 30-50 potential customers in {location_city} to validate the appeal of your specific concept: {business_idea.strip()}",
+        f"Conduct market research with 30-50 potential customers in {location_city} to validate the appeal of your concept ({concept_snippet})",
         f"Source ingredients needed for your {cuisine} menu and calculate exact cost per portion for each item",
         f"Create social media presence with 10-15 posts showcasing what makes your concept unique before launch",
         f"Develop and test operational workflows for 3-5 days to ensure you can deliver on your concept efficiently",
@@ -955,6 +1048,9 @@ def _generate_marketing_content(cuisine: str, location: str, business_type: str,
     # Extract key selling points from business idea if provided
     idea_lower = business_idea.lower() if business_idea else ""
     
+    # Get clean concept snippet for marketing
+    concept_snippet = extract_concept_snippet(business_idea, max_words=8) if business_idea else ""
+    
     # Create slogan that reflects the unique concept
     if "authentic" in idea_lower or "traditional" in idea_lower:
         slogan = f"Authentic {cuisine} in {location}—where tradition meets taste."
@@ -965,16 +1061,16 @@ def _generate_marketing_content(cuisine: str, location: str, business_type: str,
     elif "quick" in idea_lower or "fast" in idea_lower:
         slogan = f"Quick {cuisine} in {location}—great food, no wait."
     else:
-        slogan = f"{cuisine} in {location}—{business_idea.split('.')[0] if business_idea else 'where flavor meets passion'}."
+        slogan = f"{cuisine} in {location}—{concept_snippet if concept_snippet else 'where flavor meets passion'}."
     
     return {
         "slogan": slogan[:100],  # Keep it concise
         "instagram_bio": (
-            f"🍽️ {business_idea.split('.')[0] if business_idea else f'{cuisine} in {location}'} | "
+            f"🍽️ {concept_snippet if concept_snippet else f'{cuisine} in {location}'} | "
             f"📍 {location} | DM for reservations & catering"
         )[:150],  # Instagram bio limit
         "captions": [
-            f"Bringing {business_idea.split('.')[0].lower() if business_idea else f'{cuisine} flavors'} to {location}. Who's ready? 🍽️✨ #{cuisine_hashtag} #{location_hashtag}Food",
+            f"Bringing {concept_snippet.lower() if concept_snippet else f'{cuisine} flavors'} to {location}. Who's ready? 🍽️✨ #{cuisine_hashtag} #{location_hashtag}Food",
             f"Every dish tells a story. Come experience what makes us unique. 🌟 #{cuisine_hashtag} #FoodLovers",
             f"Fresh ingredients, passion, and flavor. This is {cuisine} in {location}. 🔥 #{location_hashtag}Eats #{cuisine_hashtag}Cuisine",
         ],

@@ -30,12 +30,14 @@ def render_dashboard(plan: dict) -> None:
         readiness_color = "🔴"
     
     # Metrics with improved responsive text handling
+    # Include status inside the metric card using delta parameter
     m1.metric(
         "Launch Readiness",
         f"{readiness_score}/100",
+        delta=f"{readiness_color} {readiness_label}",
+        delta_color="off",  # Disable default delta coloring
         help="Overall readiness score based on budget, business complexity, concept clarity, and market understanding"
     )
-    m1.markdown(f"<div style='text-align: center; font-weight: 600;'>{readiness_color} {readiness_label}</div>", unsafe_allow_html=True)
     
     m2.metric(
         "Menu Items",
