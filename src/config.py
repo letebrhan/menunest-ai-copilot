@@ -1,7 +1,7 @@
 """Central configuration for MenuNest."""
 
-APP_TITLE = "MenuNest"
-APP_SUBTITLE = "AI Copilot for Food Entrepreneurs"
+APP_TITLE = "MenuNest: AI Copilot for Food Entrepreneurs"
+APP_SUBTITLE = "Transform Your Food Business Idea Into Reality"
 
 BUSINESS_TYPES = [
     "Cafe",

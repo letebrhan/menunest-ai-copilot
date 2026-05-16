@@ -10,50 +10,83 @@ from src.export_utils import launch_plan_to_json, launch_plan_to_markdown
 
 def render_dashboard(plan: dict) -> None:
     """Render top-level launch dashboard cards."""
-    st.header("Launch Dashboard")
+    st.header("📊 Launch Dashboard")
+    st.caption("Key metrics for your food business concept")
+    
     m1, m2, m3, m4 = st.columns(4)
-    m1.metric("Launch Readiness", f"{plan['launch_readiness_score']}/100")
-    m2.metric("Menu Items", str(len(plan["menu_items"])))
-    m3.metric("Complexity", plan["estimated_complexity"])
-    m4.metric("Best Segment", plan["best_customer_segment"])
+    
+    readiness_score = plan['launch_readiness_score']
+    readiness_color = "🟢" if readiness_score >= 75 else "🟡" if readiness_score >= 50 else "🔴"
+    m1.metric(
+        "Launch Readiness",
+        f"{readiness_score}/100",
+        help="Overall readiness score based on concept clarity, market fit, and operational feasibility"
+    )
+    m1.markdown(f"{readiness_color} {'Strong' if readiness_score >= 75 else 'Moderate' if readiness_score >= 50 else 'Needs Work'}")
+    
+    m2.metric(
+        "Menu Items",
+        str(len(plan["menu_items"])),
+        help="Number of suggested menu items for your launch"
+    )
+    
+    m3.metric(
+        "Complexity",
+        plan["estimated_complexity"],
+        help="Operational complexity level for your concept"
+    )
+    
+    m4.metric(
+        "Best Segment",
+        plan["best_customer_segment"],
+        help="Primary target customer segment"
+    )
 
 
 def render_tabs(plan: dict) -> None:
     """Render all launch-plan result tabs."""
     tabs = st.tabs(
         [
-            "Overview",
-            "Menu & Pricing",
-            "Ingredients",
-            "Customers",
-            "Marketing",
-            "Launch Checklist",
-            "Export",
+            "📋 Overview",
+            "🍽️ Menu & Pricing",
+            "🥗 Ingredients & Allergens",
+            "👥 Customers",
+            "📱 Marketing",
+            "✅ Launch Checklist",
+            "📥 Export",
         ]
     )
 
+    # Tab 0: Overview
     with tabs[0]:
-        st.subheader("Business Summary")
-        st.write(plan["business_summary"])
+        st.subheader("📋 Business Overview")
+        
+        with st.container(border=True):
+            st.markdown("#### Business Summary")
+            st.write(plan["business_summary"])
 
-        st.subheader("Concept Positioning")
-        st.write(plan["positioning"])
+        with st.container(border=True):
+            st.markdown("#### Concept Positioning")
+            st.write(plan["positioning"])
 
-        st.subheader("Key Recommendation")
+        st.markdown("#### 💡 Key Recommendation")
         st.info(plan["key_recommendation"])
 
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("Main Risks")
+            st.markdown("#### ⚠️ Main Risks")
             for risk in plan["main_risks"]:
-                st.write(f"- {risk}")
+                st.markdown(f"- {risk}")
         with col2:
-            st.subheader("Next Steps")
+            st.markdown("#### 🎯 Next Steps")
             for step in plan["next_steps"]:
-                st.write(f"- {step}")
+                st.markdown(f"- {step}")
 
+    # Tab 1: Menu & Pricing
     with tabs[1]:
-        st.subheader("Menu and Pricing")
+        st.subheader("🍽️ Menu and Pricing Strategy")
+        st.caption(f"Suggested menu with {len(plan['menu_items'])} items tailored to your concept")
+        
         rows = [
             {
                 "Menu Item": item["name"],
@@ -65,92 +98,144 @@ def render_tabs(plan: dict) -> None:
             }
             for item in plan["menu_items"]
         ]
-        st.dataframe(pd.DataFrame(rows), use_container_width=True)
-        st.caption(
-            "Pricing is an approximate starting range and should be validated "
-            "with real ingredient costs and customer testing."
+        st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+        
+        st.info(
+            "💡 **Pricing Guidance:** These are approximate starting ranges. "
+            "Validate with real ingredient costs, competitor pricing, and customer testing before launch."
         )
 
+    # Tab 2: Ingredients & Allergens
     with tabs[2]:
-        st.subheader("Ingredients and Allergens")
+        st.subheader("🥗 Ingredients and Allergen Information")
+        st.caption("Detailed preparation notes and allergen warnings for each menu item")
+        
         for item in plan["menu_items"]:
-            with st.expander(item["name"]):
-                st.write("Main ingredients:")
-                for ingredient in item["ingredients"]:
-                    st.write(f"- {ingredient}")
+            with st.expander(f"🍴 {item['name']}", expanded=False):
+                col1, col2 = st.columns(2)
+                
+                with col1:
+                    st.markdown("**Main Ingredients:**")
+                    for ingredient in item["ingredients"]:
+                        st.markdown(f"- {ingredient}")
+                    
+                    st.markdown("**Common Allergens:**")
+                    for allergen in item["allergens"]:
+                        st.markdown(f"- ⚠️ {allergen}")
+                
+                with col2:
+                    st.markdown("**Preparation Note:**")
+                    st.write(item["preparation_note"])
+                    
+                    st.markdown("**Operational Tip:**")
+                    st.write(item["operational_tip"])
 
-                st.write("Common allergens:")
-                for allergen in item["allergens"]:
-                    st.write(f"- {allergen}")
-
-                st.write("Preparation note:")
-                st.write(item["preparation_note"])
-
-                st.write("Operational tip:")
-                st.write(item["operational_tip"])
-
+    # Tab 3: Customer Personas
     with tabs[3]:
-        st.subheader("Customer Personas")
+        st.subheader("👥 Customer Personas")
+        st.caption("Target customer segments and how to reach them")
+        
         for persona in plan["customer_personas"]:
             with st.container(border=True):
                 st.markdown(f"### {persona['name']}")
-                st.write(f"**Profile:** {persona['profile']}")
-                st.write(f"**Needs:** {persona['needs']}")
-                st.write(f"**Recommended offer:** {persona['recommended_offer']}")
-                st.write(f"**Marketing angle:** {persona['marketing_angle']}")
+                
+                col1, col2 = st.columns(2)
+                with col1:
+                    st.markdown(f"**Profile:** {persona['profile']}")
+                    st.markdown(f"**Needs:** {persona['needs']}")
+                with col2:
+                    st.markdown(f"**Recommended Offer:** {persona['recommended_offer']}")
+                    st.markdown(f"**Marketing Angle:** {persona['marketing_angle']}")
 
+    # Tab 4: Marketing Content
     with tabs[4]:
-        st.subheader("Marketing Content")
+        st.subheader("📱 Marketing Content")
+        st.caption("Ready-to-use marketing copy for social media and launch campaigns")
+        
         marketing = plan["marketing"]
 
-        st.markdown("### Brand slogan")
-        st.code(marketing["slogan"])
+        st.markdown("### 🎯 Brand Slogan")
+        st.code(marketing["slogan"], language=None)
 
-        st.markdown("### Instagram bio")
-        st.text_area("Copy Instagram bio", marketing["instagram_bio"], height=100)
+        st.markdown("### 📸 Instagram Bio")
+        st.text_area(
+            "Copy and paste this bio to your Instagram profile:",
+            marketing["instagram_bio"],
+            height=100,
+            key="instagram_bio",
+        )
 
-        st.markdown("### Social media captions")
+        st.markdown("### 📝 Social Media Captions")
+        st.caption("Use these captions for your launch posts")
         for index, caption in enumerate(marketing["captions"], start=1):
-            st.text_area(f"Caption {index}", caption, height=80)
+            st.text_area(
+                f"Caption {index}",
+                caption,
+                height=80,
+                key=f"caption_{index}",
+            )
 
-        st.markdown("### Launch announcement")
-        st.text_area("Copy launch announcement", marketing["launch_announcement"], height=120)
+        st.markdown("### 📢 Launch Announcement")
+        st.text_area(
+            "Copy this launch announcement:",
+            marketing["launch_announcement"],
+            height=120,
+            key="launch_announcement",
+        )
 
+    # Tab 5: Launch Checklist
     with tabs[5]:
-        st.subheader("Launch Checklist")
+        st.subheader("✅ Launch Checklist")
+        st.caption("Step-by-step action items to prepare for your launch")
+        
         checklist = plan["launch_checklist"]
         sections = [
-            ("Before launch", "before_launch"),
-            ("Menu validation", "menu_validation"),
-            ("Marketing setup", "marketing_setup"),
-            ("Operations", "operations"),
-            ("First-week testing", "first_week_testing"),
+            ("🚀 Before Launch", "before_launch"),
+            ("🍽️ Menu Validation", "menu_validation"),
+            ("📱 Marketing Setup", "marketing_setup"),
+            ("⚙️ Operations", "operations"),
+            ("📊 First-Week Testing", "first_week_testing"),
         ]
+        
         for title, key in sections:
-            st.markdown(f"### {title}")
-            for task in checklist[key]:
-                st.checkbox(task, value=True, key=f"{key}_{task}")
+            with st.expander(title, expanded=True):
+                for idx, task in enumerate(checklist[key]):
+                    st.checkbox(task, value=False, key=f"{key}_{idx}")
 
+    # Tab 6: Export
     with tabs[6]:
-        st.subheader("Export Report")
+        st.subheader("📥 Export Your Launch Plan")
+        st.caption("Download your complete launch plan in different formats")
+        
         markdown_report = launch_plan_to_markdown(plan)
         json_report = launch_plan_to_json(plan)
 
-        st.download_button(
-            label="Download Markdown Report",
-            data=markdown_report,
-            file_name="menunest_launch_report.md",
-            mime="text/markdown",
-        )
-
-        st.download_button(
-            label="Download JSON Data",
-            data=json_report,
-            file_name="menunest_launch_plan.json",
-            mime="application/json",
-        )
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("#### 📄 Markdown Report")
+            st.write("Human-readable format, perfect for documentation and sharing")
+            st.download_button(
+                label="📥 Download Markdown Report",
+                data=markdown_report,
+                file_name="menunest_launch_report.md",
+                mime="text/markdown",
+                use_container_width=True,
+            )
+        
+        with col2:
+            st.markdown("#### 📊 JSON Data")
+            st.write("Structured data format for integration with other tools")
+            st.download_button(
+                label="📥 Download JSON Data",
+                data=json_report,
+                file_name="menunest_launch_plan.json",
+                mime="application/json",
+                use_container_width=True,
+            )
 
         st.warning(
-            "This report is a starting point and should be validated with real "
-            "costs, local regulations, supplier information, and customer feedback."
+            "⚠️ **Important Disclaimer:** This launch plan is a starting point generated by AI. "
+            "Always validate with real costs, local regulations, supplier information, and customer feedback "
+            "before making business decisions."
         )

@@ -1,4 +1,4 @@
-"""MenuNest Streamlit app."""
+"""MenuNest: AI Copilot for Food Entrepreneurs - Streamlit App."""
 
 from __future__ import annotations
 
@@ -20,141 +20,263 @@ from src.report_renderer import render_dashboard, render_tabs
 from src.validators import validate_launch_plan
 
 
+# Page configuration
 st.set_page_config(
-    page_title="MenuNest",
+    page_title="MenuNest: AI Copilot for Food Entrepreneurs",
     page_icon="🍽️",
     layout="wide",
+    initial_sidebar_state="expanded",
 )
 
-st.title(APP_TITLE)
-st.subheader(APP_SUBTITLE)
-st.write(
-    "Turn your food idea into a market-ready menu, pricing plan, "
-    "marketing content, and launch checklist."
-)
-st.caption(
-    "MenuNest helps food entrepreneurs test and shape a food business idea "
-    "before spending heavily on rent, equipment, ingredients, and marketing."
+# Header section with consistent branding
+st.title("🍽️ MenuNest: AI Copilot for Food Entrepreneurs")
+st.markdown(
+    """
+    <div style='background-color: #f0f2f6; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;'>
+        <h3 style='margin-top: 0; color: #1f77b4;'>Transform Your Food Business Idea Into Reality</h3>
+        <p style='font-size: 1.1rem; margin-bottom: 0.5rem;'>
+            Get a complete launch plan with menu suggestions, pricing strategy, marketing content,
+            and actionable checklists—all powered by AI.
+        </p>
+        <p style='color: #666; margin-bottom: 0;'>
+            <strong>Perfect for:</strong> Food entrepreneurs who want to validate their concept before
+            investing in rent, equipment, and inventory.
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True,
 )
 
+# Sidebar with hackathon context and demo controls
 with st.sidebar:
-    st.markdown("### IBM Bob Hackathon Story")
-    st.write(
-        "MenuNest was built with IBM Bob as the AI-powered development partner."
+    st.markdown("### 🏆 IBM Bob Hackathon Project")
+    st.info(
+        "**MenuNest** was built with **IBM Bob** as the AI-powered development partner, "
+        "demonstrating how AI can accelerate product development from concept to demo."
     )
 
-    st.markdown("### How IBM Bob helped")
-    st.write("- Product workflow design")
-    st.write("- Repository structure")
-    st.write("- Streamlit prototype")
-    st.write("- Prompt and schema design")
-    st.write("- Debugging and UI polish")
-    st.write("- Tests and documentation")
+    st.markdown("### 🤖 How IBM Bob Helped")
+    st.markdown("""
+    - ✅ Product workflow design
+    - ✅ Repository structure & cleanup
+    - ✅ Streamlit UI prototype
+    - ✅ Prompt engineering & schema design
+    - ✅ Code debugging & optimization
+    - ✅ Tests and documentation
+    """)
 
-    st.markdown("### Demo scenario")
-    st.write("Ethiopian coffee and breakfast kiosk in Milan.")
+    st.markdown("### 📋 What MenuNest Generates")
+    st.markdown("""
+    - 📊 **Business Overview** - Summary, positioning, and readiness score
+    - 🍽️ **Menu & Pricing** - Suggested items with price ranges
+    - 🥗 **Ingredients & Allergens** - Detailed preparation notes
+    - 👥 **Customer Personas** - Target segments and marketing angles
+    - 📱 **Marketing Content** - Social media copy and launch strategy
+    - ✅ **Launch Checklist** - Step-by-step action items
+    - 📥 **Export Options** - Download as Markdown or JSON
+    """)
 
-    st.markdown("### What MenuNest generates")
-    st.write("- Menu and pricing ideas")
-    st.write("- Ingredient and allergen notes")
-    st.write("- Customer personas")
-    st.write("- Marketing content")
-    st.write("- Launch checklist")
-    st.write("- Exportable launch report")
+    st.markdown("---")
+    st.markdown("### ⚙️ Demo Settings")
+    use_demo = st.toggle("🔒 Use Stable Demo Mode", value=True)
+    st.caption(
+        "✅ **Recommended for live judging**\n\n"
+        "Demo mode uses pre-validated sample data, ensuring reliable results "
+        "without requiring external API keys or network access."
+    )
+    
+    if not use_demo:
+        st.warning(
+            "⚠️ Live AI mode requires valid API credentials. "
+            "Demo mode is recommended for hackathon presentations."
+        )
 
-    st.markdown("### Demo reliability")
-    use_demo = st.toggle("Use stable demo generation", value=True)
-    st.caption("Recommended for live judging. No external API key is required.")
+    st.markdown("---")
+    st.markdown("### 🎯 Demo Scenario")
+    st.success(
+        "**Ethiopian coffee & breakfast kiosk in Milan**\n\n"
+        "A focused concept targeting morning commuters, students, and cultural food explorers."
+    )
+
+# Main input form
+st.markdown("---")
+st.header("📝 Describe Your Food Business Idea")
+st.caption(
+    "Fill in the details below to generate your personalized launch plan. "
+    "The demo scenario is pre-filled—feel free to modify or use as-is."
+)
 
 with st.form("business_form"):
-    st.header("Describe your food business idea")
-
     col1, col2 = st.columns(2)
 
     with col1:
+        st.markdown("#### 🎯 Core Concept")
         business_idea = st.text_area(
-            "Business idea",
+            "Business Idea",
             value=DEFAULT_INPUTS["business_idea"],
             height=120,
+            help="Describe your food business concept in 1-2 sentences",
         )
         business_type = st.selectbox(
-            "Business type",
+            "Business Type",
             BUSINESS_TYPES,
             index=BUSINESS_TYPES.index(DEFAULT_INPUTS["business_type"]),
+            help="Select the format that best matches your concept",
         )
-        cuisine = st.text_input("Cuisine type", value=DEFAULT_INPUTS["cuisine"])
-        location = st.text_input("Location", value=DEFAULT_INPUTS["location"])
+        cuisine = st.text_input(
+            "Cuisine Type",
+            value=DEFAULT_INPUTS["cuisine"],
+            help="e.g., Italian, Ethiopian, Fusion, etc.",
+        )
+        location = st.text_input(
+            "Location",
+            value=DEFAULT_INPUTS["location"],
+            help="City or neighborhood where you plan to launch",
+        )
 
     with col2:
+        st.markdown("#### 💰 Budget & Goals")
         budget = st.selectbox(
-            "Budget range",
+            "Budget Range",
             BUDGET_RANGES,
             index=BUDGET_RANGES.index(DEFAULT_INPUTS["budget"]),
+            help="Estimated startup budget for your first phase",
         )
         target_customers = st.text_area(
-            "Target customers",
+            "Target Customers",
             value=DEFAULT_INPUTS["target_customers"],
             height=90,
+            help="Who are your ideal customers?",
         )
         dietary_focus = st.multiselect(
-            "Dietary focus",
+            "Dietary Focus",
             DIETARY_OPTIONS,
             default=DEFAULT_INPUTS["dietary_focus"],
+            help="Select all that apply to your menu concept",
         )
         launch_goal = st.text_area(
-            "Launch goal",
+            "Launch Goal",
             value=DEFAULT_INPUTS["launch_goal"],
             height=90,
+            help="What do you want to achieve in the first month?",
         )
         output_language = st.selectbox(
-            "Output language",
+            "Output Language",
             OUTPUT_LANGUAGES,
             index=OUTPUT_LANGUAGES.index(DEFAULT_INPUTS["output_language"]),
+            help="Language for the generated launch plan",
         )
 
-    submitted = st.form_submit_button("Generate Launch Plan", use_container_width=True)
+    st.markdown("---")
+    submitted = st.form_submit_button(
+        "🚀 Generate Launch Plan",
+        use_container_width=True,
+        type="primary",
+    )
 
+# Handle form submission and plan generation
 if submitted:
-    user_inputs = {
-        "business_idea": business_idea,
-        "business_type": business_type,
-        "cuisine": cuisine,
-        "location": location,
-        "budget": budget,
-        "target_customers": target_customers,
-        "dietary_focus": dietary_focus,
-        "launch_goal": launch_goal,
-        "output_language": output_language,
-    }
-
-    progress_messages = [
-        "Analyzing business idea...",
-        "Creating menu suggestions...",
-        "Building ingredient plan...",
-        "Estimating pricing ranges...",
-        "Creating customer personas...",
-        "Preparing marketing content...",
-        "Generating launch checklist...",
-    ]
-
-    progress = st.progress(0)
-    status = st.empty()
-    for i, message in enumerate(progress_messages, start=1):
-        status.write(message)
-        progress.progress(i / len(progress_messages))
-        time.sleep(0.15)
-
-    plan = generate_launch_plan(user_inputs, use_demo=use_demo)
-    is_valid, validation_message = validate_launch_plan(plan)
-
-    if not is_valid:
-        st.error("The generated launch plan is not valid.")
-        st.code(validation_message)
+    # Validate required fields
+    if not business_idea or not business_idea.strip():
+        st.error("❌ Please provide a business idea before generating the launch plan.")
+    elif not cuisine or not cuisine.strip():
+        st.error("❌ Please specify a cuisine type.")
+    elif not location or not location.strip():
+        st.error("❌ Please provide a location for your business.")
     else:
-        status.empty()
-        progress.empty()
-        st.success("Launch plan generated.")
-        render_dashboard(plan)
-        render_tabs(plan)
+        # Collect user inputs
+        user_inputs = {
+            "business_idea": business_idea,
+            "business_type": business_type,
+            "cuisine": cuisine,
+            "location": location,
+            "budget": budget,
+            "target_customers": target_customers,
+            "dietary_focus": dietary_focus,
+            "launch_goal": launch_goal,
+            "output_language": output_language,
+        }
+
+        # Show generation progress
+        st.markdown("---")
+        st.subheader("🔄 Generating Your Launch Plan...")
+        
+        progress_messages = [
+            "🔍 Analyzing your business concept...",
+            "🍽️ Creating menu suggestions...",
+            "🥗 Building ingredient and allergen notes...",
+            "💰 Estimating pricing ranges...",
+            "👥 Creating customer personas...",
+            "📱 Preparing marketing content...",
+            "✅ Generating launch checklist...",
+        ]
+
+        progress_bar = st.progress(0)
+        status_text = st.empty()
+        
+        for i, message in enumerate(progress_messages, start=1):
+            status_text.markdown(f"**{message}**")
+            progress_bar.progress(i / len(progress_messages))
+            time.sleep(0.2)
+
+        # Generate the launch plan
+        try:
+            plan = generate_launch_plan(user_inputs, use_demo=use_demo)
+            is_valid, validation_message = validate_launch_plan(plan)
+
+            if not is_valid:
+                st.error(
+                    "❌ **Generation Error**\n\n"
+                    "The generated launch plan did not pass validation. "
+                    "Please try again or contact support."
+                )
+                with st.expander("🔍 View validation details"):
+                    st.code(validation_message)
+            else:
+                # Clear progress indicators
+                status_text.empty()
+                progress_bar.empty()
+                
+                # Show success message
+                st.success(
+                    "✅ **Launch Plan Generated Successfully!**\n\n"
+                    f"Your personalized plan is ready. Scroll down to explore the results."
+                )
+                
+                # Render the dashboard and tabs
+                st.markdown("---")
+                render_dashboard(plan)
+                st.markdown("---")
+                render_tabs(plan)
+                
+        except Exception as e:
+            st.error(
+                f"❌ **Unexpected Error**\n\n"
+                f"An error occurred during generation: {str(e)}\n\n"
+                f"Please try again or enable Demo Mode in the sidebar."
+            )
+
 else:
-    st.info("Describe your food business idea above, then click Generate Launch Plan.")
+    # Initial state - show helpful message
+    st.info(
+        "👆 **Ready to start?**\n\n"
+        "Fill in your business details above and click **Generate Launch Plan** "
+        "to receive your personalized food business strategy."
+    )
+    
+    # Show a preview of what to expect
+    with st.expander("📖 What will I receive?"):
+        st.markdown("""
+        Your generated launch plan will include:
+        
+        1. **📊 Launch Dashboard** - Key metrics and readiness score
+        2. **📋 Business Overview** - Summary, positioning, and recommendations
+        3. **🍽️ Menu & Pricing** - Suggested items with price ranges
+        4. **🥗 Ingredients & Allergens** - Detailed preparation notes
+        5. **👥 Customer Personas** - Target segments and marketing angles
+        6. **📱 Marketing Content** - Ready-to-use social media copy
+        7. **✅ Launch Checklist** - Step-by-step action items
+        8. **📥 Export Options** - Download as Markdown or JSON
+        
+        All content is tailored to your specific business concept, location, and budget.
+        """)
