@@ -9,10 +9,11 @@ from src.export_utils import launch_plan_to_json, launch_plan_to_markdown
 
 
 def render_dashboard(plan: dict) -> None:
-    """Render top-level launch dashboard cards."""
+    """Render top-level launch dashboard cards with responsive design."""
     st.header("📊 Launch Dashboard")
     st.caption("Key metrics for your food business concept")
     
+    # Use responsive columns that stack on mobile
     m1, m2, m3, m4 = st.columns(4)
     
     readiness_score = plan['launch_readiness_score']
@@ -28,12 +29,13 @@ def render_dashboard(plan: dict) -> None:
         readiness_label = "Needs validation"
         readiness_color = "🔴"
     
+    # Metrics with improved responsive text handling
     m1.metric(
         "Launch Readiness",
         f"{readiness_score}/100",
         help="Overall readiness score based on budget, business complexity, concept clarity, and market understanding"
     )
-    m1.markdown(f"{readiness_color} {readiness_label}")
+    m1.markdown(f"<div style='text-align: center; font-weight: 600;'>{readiness_color} {readiness_label}</div>", unsafe_allow_html=True)
     
     m2.metric(
         "Menu Items",
@@ -47,15 +49,38 @@ def render_dashboard(plan: dict) -> None:
         help="Operational complexity level for your concept"
     )
     
+    # Best segment with text wrapping support
+    best_segment = plan["best_customer_segment"]
+    # Truncate if too long for better mobile display
+    display_segment = best_segment if len(best_segment) <= 25 else best_segment[:22] + "..."
     m4.metric(
         "Best Segment",
-        plan["best_customer_segment"],
-        help="Primary target customer segment"
+        display_segment,
+        help=f"Primary target customer segment: {best_segment}"
     )
 
 
 def render_tabs(plan: dict) -> None:
-    """Render all launch-plan result tabs."""
+    """Render all launch-plan result tabs with animations."""
+    # Add a subtle animation trigger for tab content
+    st.markdown(
+        """
+        <script>
+        // Trigger animation when tabs change
+        const observer = new MutationObserver(() => {
+            const panels = document.querySelectorAll('[data-baseweb="tab-panel"]');
+            panels.forEach(panel => {
+                if (panel.style.display !== 'none') {
+                    panel.style.animation = 'slideIn 0.4s ease-out';
+                }
+            });
+        });
+        observer.observe(document.body, { childList: true, subtree: true });
+        </script>
+        """,
+        unsafe_allow_html=True,
+    )
+    
     tabs = st.tabs(
         [
             "📋 Overview",

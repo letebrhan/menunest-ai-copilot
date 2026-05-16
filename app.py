@@ -18,6 +18,7 @@ from src.config import (
     OUTPUT_LANGUAGES,
 )
 from src.report_renderer import render_dashboard, render_tabs
+from src.styles import get_custom_css
 from src.validators import validate_launch_plan
 
 
@@ -29,17 +30,20 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Header section with consistent branding
+# Inject custom CSS for responsive design and animations
+st.markdown(get_custom_css(), unsafe_allow_html=True)
+
+# Header section with improved styling and animation
 st.title("🍽️ MenuNest: AI Copilot for Food Entrepreneurs")
 st.markdown(
     """
-    <div style='background-color: #f0f2f6; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;'>
-        <h3 style='margin-top: 0; color: #1f77b4;'>Transform Your Food Business Idea Into a Launch Plan</h3>
+    <div class='hero-section'>
+        <h3 style='margin-top: 0;'>Transform Your Food Business Idea Into a Launch Plan</h3>
         <p style='font-size: 1.1rem; margin-bottom: 0.5rem;'>
             MenuNest helps food entrepreneurs turn a rough concept into a practical first launch plan
             with menu ideas, pricing guidance, customer personas, marketing content, and action checklists.
         </p>
-        <p style='color: #666; margin-bottom: 0;'>
+        <p style='margin-bottom: 0;'>
             <strong>Perfect for:</strong> founders who want to validate a food concept before spending
             heavily on rent, equipment, inventory, or marketing.
         </p>
