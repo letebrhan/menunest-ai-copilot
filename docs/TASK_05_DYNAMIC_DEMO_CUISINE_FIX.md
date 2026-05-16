@@ -1,8 +1,8 @@
 # Task 5: Dynamic Demo Mode & Cuisine Input Improvements
 
-**Date:** 2026-05-16  
-**Status:** ✅ Completed  
-**Focus:** Make demo mode respond to user inputs and improve cuisine selection
+**Date:** 2026-05-16
+**Status:** ✅ Completed
+**Focus:** Make demo mode respond to user inputs, improve cuisine selection, and implement dynamic readiness scoring
 
 ## Problem Statement
 
@@ -11,6 +11,8 @@
 1. **Static Demo Mode**: When Stable Demo Mode was ON, changing business type, budget, dietary focus, or other form inputs still produced the same overview text about "An Ethiopian coffee and breakfast kiosk targeting Milan's morning commuters..." This made the app look static and unresponsive during judging.
 
 2. **Limited Cuisine Input**: The "Cuisine Type" field was a plain text input with "Ethiopian / East African" as the default, providing no guidance on available options.
+
+3. **Fixed Readiness Score**: The Launch Readiness score always stayed at 72/100 regardless of user inputs, making the dashboard appear static and unrealistic.
 
 ## Solution Overview
 
@@ -24,7 +26,8 @@ The original implementation used a single static `SAMPLE_LAUNCH_PLAN` dictionary
 2. **Cuisine Dropdown**: Added `CUISINE_OPTIONS` list with 11 options including "Other / Custom"
 3. **Conditional Custom Input**: Show text input only when "Other / Custom" is selected
 4. **Content Templates**: Built cuisine-specific templates for menu items, positioning, and marketing
-5. **Adaptive Logic**: Adjust readiness scores, complexity, and recommendations based on inputs
+5. **Dynamic Readiness Scoring**: Implemented multi-factor scoring algorithm that considers budget, complexity, clarity, and specificity
+6. **Adaptive Dashboard**: Updated readiness labels to match score ranges (50-64: Needs validation, 65-79: Moderate, 80-90: Strong)
 
 ## Changes Made
 
@@ -59,13 +62,36 @@ Features:
 - Detects default Ethiopian example and returns original sample
 - Generates business summary from user inputs
 - Adapts positioning based on cuisine type
-- Adjusts readiness scores by budget (65-85 range)
+- **Calculates dynamic readiness scores (50-90 range) based on 7 factors**
 - Maps complexity by business type (Low/Medium/High)
 - Creates contextual recommendations
 - Generates 4-6 menu items per cuisine
 - Builds 3 customer personas
 - Creates marketing content with hashtags
 - Generates 5-section launch checklist
+
+### 4. Dynamic Readiness Scoring (`src/sample_data.py`)
+
+Created `_calculate_readiness_score()` function with multi-factor algorithm:
+
+**Scoring Factors:**
+1. **Budget adequacy** (±15 points): Higher budgets increase readiness
+2. **Business type complexity** (±10 points): Simpler businesses score higher
+3. **Business idea clarity** (±8 points): Detailed descriptions score better
+4. **Target customer specificity** (±7 points): Clear audience definition helps
+5. **Launch goal clarity** (±5 points): Specific goals increase confidence
+6. **Dietary focus** (±3 points): Shows market understanding
+7. **Budget-complexity mismatch** (±10 points): Penalizes high-risk combinations
+
+**Score Ranges:**
+- 50-64: Needs validation (high risk, unclear concept)
+- 65-79: Moderate (reasonable clarity, manageable complexity)
+- 80-90: Strong (clear concept, good resources, lower complexity)
+
+**Examples:**
+- Restaurant + Under 5K EUR = ~55 (penalized for mismatch)
+- Coffee kiosk + detailed inputs + 50K+ EUR = ~85 (optimal)
+- Vague idea + no target + low budget = ~52 (needs work)
 
 ### 4. AI Generator Integration (`src/ai_generator.py`)
 
@@ -86,26 +112,37 @@ Created 12 new tests:
 - Integration with full generation pipeline
 - Italian language output compatibility
 - All required sections present and valid
+- **Detailed inputs increase readiness score**
+- **Restaurant with low budget gets penalized**
+- **Simple businesses with low budget remain viable**
+- **Scores stay within 50-90 bounds**
+- **Dietary focus affects scoring**
 
 ## Test Results
 
-All 48 tests pass (36 existing + 12 new):
+All 53 tests pass (36 existing + 17 new):
 
 ```bash
 $ python3 -m pytest tests/ -v
-============================== 48 passed in 0.15s ==============================
+============================== 53 passed in 0.17s ==============================
+```
+
+**Readiness Score Tests:**
+```bash
+$ python3 -m pytest tests/test_dynamic_demo.py::TestReadinessScoreCalculation -v
+============================== 5 passed in 0.03s ==============================
 ```
 
 ## Example Scenarios
 
 ### Italian Restaurant in Rome
-- Readiness Score: 82 (higher budget)
+- Readiness Score: 82 (higher budget + moderate complexity)
 - Complexity: High (restaurant)
 - Menu: Margherita Pizza, Pasta Carbonara
 - Positioning: "Authentic Italian cuisine in Rome..."
 
 ### Mexican Food Truck in Barcelona
-- Readiness Score: 78
+- Readiness Score: 75-78 (depends on input detail)
 - Complexity: Medium (food truck)
 - Menu: Tacos al Pastor, Guacamole & Chips
 - Recommendation: "Launch with mobile operation to test locations..."
@@ -186,6 +223,6 @@ This fix transforms demo mode from a static showcase into an interactive, respon
 
 **Key Achievement:** Demo mode now generates different, contextually appropriate launch plans based on user inputs while maintaining 100% reliability without API keys.
 
-**Test Coverage:** 48 tests passing, including 12 new tests for dynamic demo functionality.
+**Test Coverage:** 53 tests passing, including 17 new tests for dynamic demo and readiness scoring.
 
 **User Experience:** Judges can explore different business concepts and see the app adapt in real-time, making MenuNest feel like a true AI copilot.

@@ -261,15 +261,15 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
         f"Unique {cuisine} experience in {location_city}, offering authentic flavors and quality service to discerning customers."
     )
     
-    # Adapt readiness score based on budget
-    budget_scores = {
-        "Under 5,000 EUR": 65,
-        "5,000-10,000 EUR": 72,
-        "10,000-25,000 EUR": 78,
-        "25,000-50,000 EUR": 82,
-        "50,000+ EUR": 85,
-    }
-    launch_readiness_score = budget_scores.get(budget, 70)
+    # Calculate dynamic readiness score based on multiple factors
+    launch_readiness_score = _calculate_readiness_score(
+        business_idea=business_idea,
+        business_type=business_type,
+        budget=budget,
+        target_customers=target_customers,
+        launch_goal=launch_goal,
+        dietary_focus=dietary_focus,
+    )
     
     # Adapt complexity based on business type
     complexity_map = {
@@ -352,6 +352,119 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
         "launch_checklist": launch_checklist,
     }
 
+
+
+def _calculate_readiness_score(
+    business_idea: str,
+    business_type: str,
+    budget: str,
+    target_customers: str,
+    launch_goal: str,
+    dietary_focus: list,
+) -> int:
+    """Calculate dynamic readiness score based on multiple input factors.
+    
+    Score ranges:
+    - 50-64: Needs validation (high risk, unclear concept)
+    - 65-79: Moderate (reasonable clarity, manageable complexity)
+    - 80-90: Strong (clear concept, good resources, lower complexity)
+    
+    Args:
+        business_idea: Description of the business concept
+        business_type: Type of food business
+        budget: Budget range
+        target_customers: Description of target audience
+        launch_goal: Launch objectives
+        dietary_focus: List of dietary considerations
+        
+    Returns:
+        Readiness score between 50 and 90
+    """
+    score = 70  # Base score
+    
+    # Factor 1: Budget adequacy (±15 points)
+    budget_adjustments = {
+        "Under 5,000 EUR": -5,
+        "5,000-10,000 EUR": 0,
+        "10,000-25,000 EUR": +5,
+        "25,000-50,000 EUR": +10,
+        "50,000+ EUR": +15,
+    }
+    score += budget_adjustments.get(budget, 0)
+    
+    # Factor 2: Business type complexity (±10 points)
+    # Lower complexity = higher readiness
+    complexity_adjustments = {
+        "Coffee kiosk": +8,
+        "Market stall": +8,
+        "Home chef": +10,
+        "Food product": +5,
+        "Cafe": +3,
+        "Bakery": +3,
+        "Food truck": 0,
+        "Catering service": 0,
+        "Restaurant": -8,
+        "Other": 0,
+    }
+    score += complexity_adjustments.get(business_type, 0)
+    
+    # Factor 3: Business idea clarity (±8 points)
+    # Longer, more detailed ideas score higher
+    idea_length = len(business_idea.strip())
+    if idea_length > 100:
+        score += 8
+    elif idea_length > 50:
+        score += 5
+    elif idea_length > 20:
+        score += 2
+    else:
+        score -= 5  # Very vague idea
+    
+    # Factor 4: Target customer specificity (±7 points)
+    customer_length = len(target_customers.strip())
+    if customer_length > 80:
+        score += 7
+    elif customer_length > 40:
+        score += 4
+    elif customer_length > 15:
+        score += 2
+    else:
+        score -= 3  # Unclear target
+    
+    # Factor 5: Launch goal clarity (±5 points)
+    goal_length = len(launch_goal.strip())
+    if goal_length > 60:
+        score += 5
+    elif goal_length > 30:
+        score += 3
+    elif goal_length > 10:
+        score += 1
+    else:
+        score -= 2  # No clear goal
+    
+    # Factor 6: Dietary focus specificity (±3 points)
+    # Having specific dietary focus shows market understanding
+    if len(dietary_focus) >= 3:
+        score += 3
+    elif len(dietary_focus) >= 2:
+        score += 2
+    elif len(dietary_focus) == 1:
+        score += 1
+    
+    # Factor 7: Budget-complexity mismatch penalty (±10 points)
+    # High complexity with low budget is risky
+    high_complexity_types = ["Restaurant", "Catering service"]
+    low_budgets = ["Under 5,000 EUR", "5,000-10,000 EUR"]
+    
+    if business_type in high_complexity_types and budget in low_budgets:
+        score -= 10  # Significant risk
+    elif business_type in high_complexity_types and budget == "10,000-25,000 EUR":
+        score -= 5  # Moderate risk
+    
+    # Ensure score stays within realistic bounds (50-90)
+    score = max(50, min(90, score))
+    
+    return score
 
 def _generate_menu_items(cuisine: str, dietary_focus: list) -> list[dict[str, Any]]:
     """Generate menu items based on cuisine type and dietary focus."""

@@ -128,7 +128,7 @@ class TestDynamicDemoGeneration:
     def test_low_budget_affects_readiness_score(self):
         """Test that lower budget results in lower readiness score."""
         user_inputs_low = {
-            "business_idea": "Small coffee kiosk",
+            "business_idea": "Small coffee kiosk with limited menu",
             "business_type": "Coffee kiosk",
             "cuisine": "Coffee / Breakfast",
             "location": "Milan, Italy",
@@ -150,19 +150,23 @@ class TestDynamicDemoGeneration:
         # Higher budget should have higher readiness score
         assert plan_high["launch_readiness_score"] > plan_low["launch_readiness_score"]
         
+        # Scores should be in realistic ranges
+        assert 50 <= plan_low["launch_readiness_score"] <= 90
+        assert 50 <= plan_high["launch_readiness_score"] <= 90
+        
         # Low budget should mention minimal viable product
         assert "minimal" in plan_low["key_recommendation"].lower() or "test" in plan_low["key_recommendation"].lower()
 
-    def test_business_type_affects_complexity(self):
-        """Test that business type affects estimated complexity."""
+    def test_business_type_affects_complexity_and_score(self):
+        """Test that business type affects both complexity and readiness score."""
         base_inputs = {
-            "business_idea": "Food business",
+            "business_idea": "Food business with authentic cuisine and quality ingredients",
             "cuisine": "Italian",
             "location": "Milan, Italy",
             "budget": "10,000-25,000 EUR",
-            "target_customers": "Local customers",
-            "dietary_focus": [],
-            "launch_goal": "Launch successfully",
+            "target_customers": "Local customers and tourists",
+            "dietary_focus": ["Premium experience"],
+            "launch_goal": "Launch successfully and build reputation",
             "output_language": "English",
         }
         
@@ -173,6 +177,9 @@ class TestDynamicDemoGeneration:
         # Restaurant should be more complex than kiosk
         complexity_order = {"Low": 1, "Medium": 2, "High": 3}
         assert complexity_order[restaurant_plan["estimated_complexity"]] > complexity_order[kiosk_plan["estimated_complexity"]]
+        
+        # Kiosk should have higher readiness score (lower complexity)
+        assert kiosk_plan["launch_readiness_score"] > restaurant_plan["launch_readiness_score"]
 
     def test_customer_personas_adapt_to_target(self):
         """Test that customer personas adapt to target customers."""
@@ -363,3 +370,160 @@ if __name__ == "__main__":
     pytest.main([__file__, "-v"])
 
 # Made with Bob
+
+
+
+class TestReadinessScoreCalculation:
+    """Test suite for dynamic readiness score calculation."""
+
+    def test_detailed_inputs_increase_score(self):
+        """Test that detailed business idea, customers, and goals increase score."""
+        vague_inputs = {
+            "business_idea": "Food",
+            "business_type": "Cafe",
+            "cuisine": "Italian",
+            "location": "Rome",
+            "budget": "10,000-25,000 EUR",
+            "target_customers": "People",
+            "dietary_focus": [],
+            "launch_goal": "Start",
+            "output_language": "English",
+        }
+        
+        detailed_inputs = {
+            "business_idea": "A modern Italian cafe focusing on authentic regional recipes, using locally sourced ingredients to create a memorable dining experience for both tourists and locals",
+            "business_type": "Cafe",
+            "cuisine": "Italian",
+            "location": "Rome, Italy",
+            "budget": "10,000-25,000 EUR",
+            "target_customers": "Young professionals aged 25-40, tourists seeking authentic Italian cuisine, and local food enthusiasts who appreciate quality ingredients and traditional preparation methods",
+            "dietary_focus": ["Premium experience", "Healthy meals"],
+            "launch_goal": "Establish a strong reputation for authentic Italian cuisine within the first three months, build a loyal customer base, and achieve positive word-of-mouth through exceptional quality and service",
+            "output_language": "English",
+        }
+        
+        vague_plan = generate_dynamic_demo_plan(vague_inputs)
+        detailed_plan = generate_dynamic_demo_plan(detailed_inputs)
+        
+        # Detailed inputs should result in higher readiness score
+        assert detailed_plan["launch_readiness_score"] > vague_plan["launch_readiness_score"]
+        
+        # Difference should be significant (at least 10 points)
+        assert detailed_plan["launch_readiness_score"] - vague_plan["launch_readiness_score"] >= 10
+
+    def test_restaurant_with_low_budget_penalized(self):
+        """Test that high-complexity business with low budget gets penalized."""
+        low_budget_restaurant = {
+            "business_idea": "Full-service Italian restaurant with extensive menu",
+            "business_type": "Restaurant",
+            "cuisine": "Italian",
+            "location": "Milan, Italy",
+            "budget": "Under 5,000 EUR",
+            "target_customers": "Families and couples",
+            "dietary_focus": [],
+            "launch_goal": "Open a successful restaurant",
+            "output_language": "English",
+        }
+        
+        adequate_budget_restaurant = {
+            **low_budget_restaurant,
+            "budget": "50,000+ EUR",
+        }
+        
+        low_plan = generate_dynamic_demo_plan(low_budget_restaurant)
+        high_plan = generate_dynamic_demo_plan(adequate_budget_restaurant)
+        
+        # Low budget restaurant should have significantly lower score
+        assert high_plan["launch_readiness_score"] > low_plan["launch_readiness_score"]
+        
+        # Low budget restaurant should be in "needs validation" range
+        assert low_plan["launch_readiness_score"] < 65
+
+    def test_simple_business_with_low_budget_viable(self):
+        """Test that simple business types can succeed with lower budgets."""
+        low_budget_kiosk = {
+            "business_idea": "Coffee kiosk serving espresso and pastries to morning commuters",
+            "business_type": "Coffee kiosk",
+            "cuisine": "Coffee / Breakfast",
+            "location": "Milan, Italy",
+            "budget": "Under 5,000 EUR",
+            "target_customers": "Morning commuters and office workers",
+            "dietary_focus": ["Affordable meals"],
+            "launch_goal": "Test market demand with minimal investment",
+            "output_language": "English",
+        }
+        
+        plan = generate_dynamic_demo_plan(low_budget_kiosk)
+        
+        # Simple business with low budget and good clarity should score well
+        # Coffee kiosk gets +8 for low complexity, detailed inputs add more points
+        assert plan["launch_readiness_score"] >= 70
+        # Score should be reasonable for a well-planned simple business
+        assert plan["launch_readiness_score"] <= 90
+
+    def test_score_stays_within_bounds(self):
+        """Test that readiness score always stays between 50 and 90."""
+        # Test extreme low scenario
+        worst_case = {
+            "business_idea": "Food",
+            "business_type": "Restaurant",
+            "cuisine": "Other",
+            "location": "City",
+            "budget": "Under 5,000 EUR",
+            "target_customers": "",
+            "dietary_focus": [],
+            "launch_goal": "",
+            "output_language": "English",
+        }
+        
+        # Test extreme high scenario
+        best_case = {
+            "business_idea": "A highly detailed and well-researched food business concept with clear market positioning, unique value proposition, and comprehensive understanding of target demographics and competitive landscape",
+            "business_type": "Coffee kiosk",
+            "cuisine": "Coffee / Breakfast",
+            "location": "Milan, Italy",
+            "budget": "50,000+ EUR",
+            "target_customers": "Detailed description of target customers including demographics, psychographics, spending habits, and specific pain points that our business will address",
+            "dietary_focus": ["Vegetarian-friendly", "Vegan-friendly", "Healthy meals"],
+            "launch_goal": "Comprehensive launch goal with specific metrics, timelines, and success criteria including customer acquisition targets, revenue goals, and operational milestones",
+            "output_language": "English",
+        }
+        
+        worst_plan = generate_dynamic_demo_plan(worst_case)
+        best_plan = generate_dynamic_demo_plan(best_case)
+        
+        # Both should be within bounds
+        assert 50 <= worst_plan["launch_readiness_score"] <= 90
+        assert 50 <= best_plan["launch_readiness_score"] <= 90
+        
+        # Best case should be significantly higher
+        assert best_plan["launch_readiness_score"] > worst_plan["launch_readiness_score"]
+
+    def test_dietary_focus_affects_score(self):
+        """Test that having dietary focus increases readiness score."""
+        no_focus = {
+            "business_idea": "Italian restaurant serving traditional dishes",
+            "business_type": "Restaurant",
+            "cuisine": "Italian",
+            "location": "Rome, Italy",
+            "budget": "25,000-50,000 EUR",
+            "target_customers": "Food enthusiasts and tourists",
+            "dietary_focus": [],
+            "launch_goal": "Establish authentic Italian dining experience",
+            "output_language": "English",
+        }
+        
+        with_focus = {
+            **no_focus,
+            "dietary_focus": ["Vegetarian-friendly", "Gluten-free options", "Healthy meals"],
+        }
+        
+        no_focus_plan = generate_dynamic_demo_plan(no_focus)
+        with_focus_plan = generate_dynamic_demo_plan(with_focus)
+        
+        # Having dietary focus should increase score
+        assert with_focus_plan["launch_readiness_score"] >= no_focus_plan["launch_readiness_score"]
+
+
+if __name__ == "__main__":
+    pytest.main([__file__, "-v"])

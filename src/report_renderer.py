@@ -16,13 +16,24 @@ def render_dashboard(plan: dict) -> None:
     m1, m2, m3, m4 = st.columns(4)
     
     readiness_score = plan['launch_readiness_score']
-    readiness_color = "🟢" if readiness_score >= 75 else "🟡" if readiness_score >= 50 else "🔴"
+    
+    # Determine readiness label and color based on score
+    if readiness_score >= 80:
+        readiness_label = "Strong"
+        readiness_color = "🟢"
+    elif readiness_score >= 65:
+        readiness_label = "Moderate"
+        readiness_color = "🟡"
+    else:
+        readiness_label = "Needs validation"
+        readiness_color = "🔴"
+    
     m1.metric(
         "Launch Readiness",
         f"{readiness_score}/100",
-        help="Overall readiness score based on concept clarity, market fit, and operational feasibility"
+        help="Overall readiness score based on budget, business complexity, concept clarity, and market understanding"
     )
-    m1.markdown(f"{readiness_color} {'Strong' if readiness_score >= 75 else 'Moderate' if readiness_score >= 50 else 'Needs Work'}")
+    m1.markdown(f"{readiness_color} {readiness_label}")
     
     m2.metric(
         "Menu Items",

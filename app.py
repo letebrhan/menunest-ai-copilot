@@ -34,14 +34,14 @@ st.title("🍽️ MenuNest: AI Copilot for Food Entrepreneurs")
 st.markdown(
     """
     <div style='background-color: #f0f2f6; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;'>
-        <h3 style='margin-top: 0; color: #1f77b4;'>Transform Your Food Business Idea Into Reality</h3>
+        <h3 style='margin-top: 0; color: #1f77b4;'>Transform Your Food Business Idea Into a Launch Plan</h3>
         <p style='font-size: 1.1rem; margin-bottom: 0.5rem;'>
-            Get a complete launch plan with menu suggestions, pricing strategy, marketing content,
-            and actionable checklists—all powered by AI.
+            MenuNest helps food entrepreneurs turn a rough concept into a practical first launch plan
+            with menu ideas, pricing guidance, customer personas, marketing content, and action checklists.
         </p>
         <p style='color: #666; margin-bottom: 0;'>
-            <strong>Perfect for:</strong> Food entrepreneurs who want to validate their concept before
-            investing in rent, equipment, and inventory.
+            <strong>Perfect for:</strong> founders who want to validate a food concept before spending
+            heavily on rent, equipment, inventory, or marketing.
         </p>
     </div>
     """,
