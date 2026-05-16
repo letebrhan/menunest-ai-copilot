@@ -214,7 +214,8 @@ def validate_business_idea(business_idea: str) -> tuple[bool, str]:
     - Empty or whitespace-only input
     - Very short input (less than 10 characters)
     - Gibberish or random text patterns
-    - Lack of food-related context
+    - Non-food business text (math problems, school exercises, etc.)
+    - Lack of food-related context (REQUIRED - must contain food/business keywords)
     
     Args:
         business_idea: The business idea text to validate
@@ -262,31 +263,58 @@ def validate_business_idea(business_idea: str) -> tuple[bool, str]:
     if len(words) < 2:
         return False, "Please describe your food business idea using complete words and sentences."
     
-    # 6. Check for food/business context (optional but helpful)
-    # This is a soft check - we look for food-related or business-related terms
+    # 6. Detect non-food business text patterns
+    # Check for math problems, equations, or academic exercises
+    math_patterns = [
+        r'\d+\s*[\+\-\*\/\=]\s*\d+',  # Math operations like "2 + 2 = 4"
+        r'\b(solve|calculate|equation|formula|theorem|proof)\b',
+        r'\b(x|y|z)\s*[\+\-\*\/\=]',  # Algebraic variables
+    ]
+    for pattern in math_patterns:
+        if re.search(pattern, idea.lower()):
+            return False, "Please enter a food business idea, not a math problem or academic exercise. Example: 'I want to launch a bakery in Milan.'"
+    
+    # Check for obvious non-food topics
+    non_food_indicators = [
+        r'\b(homework|assignment|essay|report|thesis|dissertation)\b',
+        r'\b(school|university|college|class|course|lecture)\b',
+        r'\b(programming|code|software|algorithm|function|variable)\b',
+        r'\b(physics|chemistry|biology|mathematics|geometry|algebra)\b',
+        r'\b(history|geography|literature|poetry|novel|book)\b',
+    ]
+    for pattern in non_food_indicators:
+        if re.search(pattern, idea.lower()):
+            return False, "Please enter a food business idea. Example: 'I want to launch a bakery in Milan' or 'Ethiopian coffee kiosk for morning commuters.'"
+    
+    # 7. Check for food/business context (now a REQUIRED check)
+    # This ensures the text is actually about food business
     food_business_keywords = [
         'food', 'restaurant', 'cafe', 'coffee', 'kitchen', 'chef', 'cook', 'meal',
         'breakfast', 'lunch', 'dinner', 'snack', 'drink', 'beverage', 'menu',
         'cuisine', 'dish', 'recipe', 'bakery', 'bar', 'grill', 'bistro', 'deli',
         'catering', 'truck', 'kiosk', 'stall', 'market', 'shop', 'store',
         'pizza', 'burger', 'sandwich', 'salad', 'soup', 'pasta', 'rice', 'bread',
-        'vegan', 'vegetarian', 'organic', 'healthy', 'fresh', 'local',
+        'vegan', 'vegetarian', 'organic', 'healthy', 'fresh', 'local', 'eat', 'eating',
         'serve', 'serving', 'offer', 'sell', 'selling', 'business', 'customers',
         'ethiopian', 'italian', 'mexican', 'indian', 'chinese', 'japanese', 'thai',
-        'mediterranean', 'asian', 'american', 'french', 'greek', 'middle eastern'
+        'mediterranean', 'asian', 'american', 'french', 'greek', 'middle eastern',
+        'launch', 'open', 'start', 'create', 'establish', 'run', 'operate',
+        'dessert', 'sweet', 'savory', 'spicy', 'flavor', 'taste', 'delicious',
+        'wine', 'beer', 'juice', 'smoothie', 'tea', 'espresso', 'latte',
     ]
     
     idea_lower_words = idea.lower().split()
     has_food_context = any(
-        keyword in idea_lower or 
+        keyword in idea.lower() or
         any(keyword in word for word in idea_lower_words)
         for keyword in food_business_keywords
     )
     
     if not has_food_context:
-        # This is a warning, not a hard failure - allow it but could be improved
-        # We don't block it because the user might describe a food business in unique ways
-        pass
+        return False, (
+            "Please enter a food business idea. Your text doesn't appear to describe a food or restaurant concept. "
+            "Example: 'I want to launch a bakery in Milan' or 'Ethiopian coffee kiosk for morning commuters.'"
+        )
     
     return True, ""
 

@@ -204,9 +204,12 @@ def clean_business_idea(business_idea: str) -> str:
     
     This function:
     1. Removes common greetings (Hi, Hello, Hey, etc.)
-    2. Normalizes whitespace and newlines
-    3. Removes filler phrases like "I want to", "I would like to"
-    4. Returns a clean, professional concept description
+    2. Removes personal introductions (I am [Name], My name is [Name])
+    3. Removes request fillers (please help me, could you help me, etc.)
+    4. Normalizes common typos (resturan->restaurant, barkery->bakery)
+    5. Normalizes whitespace and newlines
+    6. Removes filler phrases like "I want to", "I would like to"
+    7. Returns a clean, professional concept description
     
     Args:
         business_idea: Raw business idea text from user input
@@ -227,11 +230,34 @@ def clean_business_idea(business_idea: str) -> str:
         r'^hey[,\s]+',
         r'^greetings[,\s]+',
         r'^good\s+(morning|afternoon|evening)[,\s]+',
+        r'^dear[,\s]+',
     ]
     for greeting in greetings:
         cleaned = re.sub(greeting, '', cleaned, flags=re.IGNORECASE)
     
-    # Remove filler phrases that don't add value
+    # Remove personal introductions (I am [Name], My name is [Name])
+    personal_intros = [
+        r'^i\s+am\s+[a-zA-Z]+[,.\s]+',
+        r'^my\s+name\s+is\s+[a-zA-Z]+[,.\s]+',
+        r'^this\s+is\s+[a-zA-Z]+[,.\s]+',
+    ]
+    for intro in personal_intros:
+        cleaned = re.sub(intro, '', cleaned, flags=re.IGNORECASE)
+    
+    # Remove request fillers (please help me, could you help me, etc.)
+    request_fillers = [
+        r'^please\s+could\s+you\s+help\s+me\s+(to\s+)?',
+        r'^could\s+you\s+(please\s+)?help\s+me\s+(to\s+)?',
+        r'^please\s+help\s+me\s+(to\s+)?',
+        r'^can\s+you\s+(please\s+)?help\s+me\s+(to\s+)?',
+        r'^i\s+need\s+help\s+(to\s+)?',
+        r'^i\s+want\s+you\s+to\s+',
+        r'^please\s+',
+    ]
+    for filler in request_fillers:
+        cleaned = re.sub(filler, '', cleaned, flags=re.IGNORECASE)
+    
+    # Remove action filler phrases that don't add value
     filler_phrases = [
         r'^i\s+want\s+to\s+',
         r'^i\s+would\s+like\s+to\s+',
@@ -240,9 +266,32 @@ def clean_business_idea(business_idea: str) -> str:
         r'^i\s+wish\s+to\s+',
         r'^my\s+idea\s+is\s+to\s+',
         r'^the\s+idea\s+is\s+to\s+',
+        r'^i\s+am\s+thinking\s+(of|about)\s+',
+        r'^i\s+am\s+considering\s+',
     ]
     for phrase in filler_phrases:
         cleaned = re.sub(phrase, '', cleaned, flags=re.IGNORECASE)
+    
+    # Normalize common typos (case-insensitive word boundary matching)
+    typo_corrections = {
+        r'\bresturan\b': 'restaurant',
+        r'\bresturant\b': 'restaurant',
+        r'\brestaurant\b': 'restaurant',  # Keep correct spelling
+        r'\bbarkery\b': 'bakery',
+        r'\bbakery\b': 'bakery',  # Keep correct spelling
+        r'\bbussiness\b': 'business',
+        r'\bbusines\b': 'business',
+        r'\bbusiness\b': 'business',  # Keep correct spelling
+        r'\bcafe\b': 'cafe',  # Normalize
+        r'\bcaffe\b': 'cafe',
+        r'\bcoffe\b': 'coffee',
+        r'\bcoffee\b': 'coffee',  # Keep correct spelling
+    }
+    for typo, correction in typo_corrections.items():
+        cleaned = re.sub(typo, correction, cleaned, flags=re.IGNORECASE)
+    
+    # Remove any remaining leading/trailing punctuation or whitespace
+    cleaned = cleaned.strip(' .,;:')
     
     # Capitalize first letter if needed
     if cleaned and cleaned[0].islower():
