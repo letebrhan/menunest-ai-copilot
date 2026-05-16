@@ -462,18 +462,32 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       INPUT FIELDS & FORMS - ENHANCED CLARITY
+       INPUT FIELDS & FORMS - CONSISTENT & READABLE
        ============================================ */
     
-    /* Text input fields with clear boundaries */
+    /* Consistent font size for all form inputs */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea,
+    .stSelectbox > div > div > div,
+    .stMultiSelect > div > div {
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Text input fields with consistent styling */
     .stTextInput > div > div > input {
         border: 2px solid rgba(255, 152, 0, 0.25) !important;
         border-radius: 0.5rem !important;
-        padding: 0.75rem 1rem !important;
+        padding: 0.65rem 0.9rem !important;
         background-color: white !important;
-        font-size: 1rem !important;
+        height: 42px !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .stTextInput > div > div > input::placeholder {
+        font-size: 0.95rem !important;
+        color: #999 !important;
     }
     
     .stTextInput > div > div > input:hover {
@@ -487,17 +501,21 @@ def get_custom_css() -> str:
         outline: none !important;
     }
     
-    /* Text area fields with adequate height and padding */
+    /* Text area fields with adequate height */
     .stTextArea > div > div > textarea {
         border: 2px solid rgba(255, 152, 0, 0.25) !important;
         border-radius: 0.5rem !important;
-        padding: 0.75rem 1rem !important;
+        padding: 0.65rem 0.9rem !important;
         background-color: white !important;
-        font-size: 1rem !important;
-        min-height: 120px !important;
+        min-height: 100px !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
         resize: vertical !important;
+    }
+    
+    .stTextArea > div > div > textarea::placeholder {
+        font-size: 0.95rem !important;
+        color: #999 !important;
     }
     
     .stTextArea > div > div > textarea:hover {
@@ -511,13 +529,14 @@ def get_custom_css() -> str:
         outline: none !important;
     }
     
-    /* Select/dropdown fields with clickable appearance */
+    /* Select/dropdown fields - prevent text clipping */
     .stSelectbox > div > div {
         border: 2px solid rgba(255, 152, 0, 0.25) !important;
         border-radius: 0.5rem !important;
         background-color: white !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        min-height: 42px !important;
     }
     
     .stSelectbox > div > div:hover {
@@ -526,19 +545,29 @@ def get_custom_css() -> str:
         cursor: pointer !important;
     }
     
+    /* Dropdown selected value - prevent clipping */
     .stSelectbox > div > div > div {
-        padding: 0.75rem 1rem !important;
-        font-size: 1rem !important;
+        padding: 0.65rem 0.9rem !important;
+        min-height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
     }
     
-    /* Multi-select fields */
+    /* Dropdown text */
+    .stSelectbox [data-baseweb="select"] > div {
+        font-size: 0.95rem !important;
+        line-height: 1.5 !important;
+    }
+    
+    /* Multi-select fields with consistent height */
     .stMultiSelect > div > div {
         border: 2px solid rgba(255, 152, 0, 0.25) !important;
         border-radius: 0.5rem !important;
         background-color: white !important;
         transition: all 0.3s ease !important;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-        min-height: 120px !important;
+        min-height: 100px !important;
+        padding: 0.5rem !important;
     }
     
     .stMultiSelect > div > div:hover {
@@ -546,27 +575,34 @@ def get_custom_css() -> str:
         box-shadow: 0 2px 6px rgba(255, 152, 0, 0.1) !important;
     }
     
-    /* Form labels with better spacing and visibility */
+    /* Multi-select tags */
+    .stMultiSelect [data-baseweb="tag"] {
+        font-size: 0.9rem !important;
+        padding: 0.25rem 0.5rem !important;
+        margin: 0.25rem !important;
+    }
+    
+    /* Form labels - consistent sizing */
     .stTextInput > label,
     .stTextArea > label,
     .stSelectbox > label,
     .stMultiSelect > label {
         color: #2d3748 !important;
         font-weight: 600 !important;
-        font-size: 0.95rem !important;
-        margin-bottom: 0.5rem !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.4rem !important;
         display: block !important;
     }
     
-    /* Form field containers with better spacing */
+    /* Form field containers with consistent spacing */
     .stTextInput,
     .stTextArea,
     .stSelectbox,
     .stMultiSelect {
-        margin-bottom: 1.25rem !important;
+        margin-bottom: 1.1rem !important;
     }
     
-    /* Help text / captions under form fields */
+    /* Help text / captions */
     .stTextInput + div,
     .stTextArea + div,
     .stSelectbox + div,
@@ -574,6 +610,7 @@ def get_custom_css() -> str:
         color: #666 !important;
         font-size: 0.85rem !important;
         margin-top: 0.25rem !important;
+        line-height: 1.4 !important;
     }
     
     /* ============================================
