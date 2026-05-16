@@ -104,11 +104,18 @@ class LaunchPlan(BaseModel):
     launch_checklist: LaunchChecklist
     
     @validator("estimated_complexity")
-    def validate_complexity(cls, v: str) -> str:
+    def validate_estimated_complexity(cls, v: str) -> str:
         """Ensure complexity is one of the allowed values."""
         allowed = {"Low", "Medium", "High"}
         if v not in allowed:
             raise ValueError(f"Complexity must be one of {allowed}, got '{v}'")
+        return v
+    
+    @validator("menu_items", "customer_personas")
+    def validate_non_empty_lists(cls, v: list) -> list:
+        """Ensure lists have at least one item."""
+        if not v or len(v) == 0:
+            raise ValueError("List must contain at least one item")
         return v
     
     @validator("main_risks", "next_steps")
