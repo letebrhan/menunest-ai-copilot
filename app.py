@@ -19,7 +19,7 @@ from src.config import (
 )
 from src.report_renderer import render_dashboard, render_tabs
 from src.styles import get_custom_css
-from src.validators import validate_launch_plan
+from src.validators import validate_launch_plan, validate_user_inputs
 
 
 # Page configuration
@@ -307,26 +307,25 @@ with st.form("business_form"):
 
 # Handle form submission and plan generation
 if submitted:
-    # Validate required fields
-    if not business_idea or not business_idea.strip():
-        st.error("❌ Please provide a business idea before generating the launch plan.")
-    elif not cuisine or not cuisine.strip():
-        st.error("❌ Please specify a cuisine type.")
-    elif not location or not location.strip():
-        st.error("❌ Please provide a location for your business.")
+    # Collect user inputs
+    user_inputs = {
+        "business_idea": business_idea,
+        "business_type": business_type,
+        "cuisine": cuisine,
+        "location": location,
+        "budget": budget,
+        "target_customers": target_customers,
+        "dietary_focus": dietary_focus,
+        "launch_goal": launch_goal,
+        "output_language": output_language,
+    }
+    
+    # Validate user inputs
+    is_valid, validation_error = validate_user_inputs(user_inputs)
+    
+    if not is_valid:
+        st.error(f"❌ **Input Validation Error**\n\n{validation_error}")
     else:
-        # Collect user inputs
-        user_inputs = {
-            "business_idea": business_idea,
-            "business_type": business_type,
-            "cuisine": cuisine,
-            "location": location,
-            "budget": budget,
-            "target_customers": target_customers,
-            "dietary_focus": dietary_focus,
-            "launch_goal": launch_goal,
-            "output_language": output_language,
-        }
 
         # Show generation progress
         st.markdown("---")

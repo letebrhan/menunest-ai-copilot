@@ -203,8 +203,8 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     """Generate a demo launch plan that adapts to user inputs.
     
     This function creates realistic demo data based on the user's form inputs,
-    making the demo mode feel responsive and personalized while maintaining
-    reliability without requiring API calls.
+    with the Business Idea field as the PRIMARY driver of the generated content.
+    The other fields (cuisine, location, etc.) provide supporting context.
     
     Args:
         user_inputs: Dictionary containing business concept details
@@ -221,46 +221,67 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     dietary_focus = user_inputs.get("dietary_focus", [])
     launch_goal = user_inputs.get("launch_goal", "")
     
-    # Determine if this is the default Ethiopian example
-    is_default = (
-        "ethiopian" in business_idea.lower() and
+    # Extract key concepts from the Business Idea text
+    # This is the PRIMARY source of truth for the plan
+    idea_lower = business_idea.lower()
+    idea_words = set(business_idea.lower().split())
+    
+    # Determine if this is the exact default Ethiopian example
+    # Only return static plan if ALL fields match the default exactly
+    is_exact_default = (
+        "ethiopian coffee and breakfast kiosk" in idea_lower and
         "ethiopian" in cuisine.lower() and
-        "milan" in location.lower()
+        "milan" in location.lower() and
+        business_type == "Coffee kiosk" and
+        "morning commuters" in target_customers.lower()
     )
     
-    # If default inputs, return the original sample plan
-    if is_default:
+    # If exact default inputs, return the original sample plan
+    if is_exact_default:
         return SAMPLE_LAUNCH_PLAN
     
-    # Generate adapted content based on inputs
+    # Generate adapted content based on Business Idea as PRIMARY source
+    # The Business Idea text should drive the narrative, with other fields as context
     cuisine_lower = cuisine.lower()
     location_city = location.split(",")[0].strip()
     
-    # Adapt business summary with dietary focus
+    # Build business summary that REFLECTS the Business Idea text
+    # Extract key themes from the business idea
     dietary_text = _get_dietary_focus_text(dietary_focus)
+    
+    # Use the business idea directly as the core of the summary
+    # Add context from other fields only to supplement
     business_summary = (
-        f"A {cuisine} {business_type.lower()} targeting {target_customers.lower() if target_customers else 'local customers'} "
-        f"in {location}. The concept focuses on delivering authentic flavors with efficient operations, "
-        f"offering a curated menu that balances quality, speed, and profitability{dietary_text}."
+        f"{business_idea.strip()} "
+        f"This {business_type.lower()} concept in {location} targets {target_customers if target_customers else 'local customers'}, "
+        f"focusing on delivering a curated menu that balances quality, speed, and profitability{dietary_text}."
     )
     
-    # Adapt positioning based on cuisine and business type
-    positioning_templates = {
-        "italian": f"Authentic Italian cuisine in {location_city}, bringing traditional recipes and fresh ingredients to create a memorable dining experience.",
-        "mediterranean": f"Fresh Mediterranean flavors in {location_city}, offering healthy, flavorful dishes inspired by coastal traditions.",
-        "middle eastern": f"Authentic Middle Eastern cuisine in {location_city}, featuring traditional spices, fresh ingredients, and time-honored recipes.",
-        "mexican": f"Vibrant Mexican flavors in {location_city}, serving authentic dishes with fresh ingredients and bold, traditional seasonings.",
-        "indian": f"Traditional Indian cuisine in {location_city}, offering aromatic spices, authentic recipes, and diverse regional flavors.",
-        "asian fusion": f"Creative Asian fusion in {location_city}, blending traditional techniques with modern innovation for unique flavor experiences.",
-        "vegan": f"Plant-based excellence in {location_city}, proving that vegan food can be delicious, satisfying, and accessible to everyone.",
-        "bakery": f"Artisan bakery in {location_city}, crafting fresh breads, pastries, and baked goods using traditional methods and quality ingredients.",
-        "coffee": f"Specialty coffee experience in {location_city}, serving expertly crafted beverages with premium beans and skilled preparation.",
-    }
+    # Build positioning that reflects the BUSINESS IDEA, not just cuisine templates
+    # Extract unique value proposition from the business idea
+    positioning_base = f"This {business_type.lower()} in {location_city} "
     
-    positioning = positioning_templates.get(
-        next((k for k in positioning_templates if k in cuisine_lower), ""),
-        f"Unique {cuisine} experience in {location_city}, offering authentic flavors and quality service to discerning customers."
-    )
+    # Try to extract what makes this concept unique from the business idea
+    if "authentic" in idea_lower or "traditional" in idea_lower:
+        positioning_base += f"offers authentic {cuisine} flavors and traditional preparation methods. "
+    elif "modern" in idea_lower or "innovative" in idea_lower or "fusion" in idea_lower:
+        positioning_base += f"brings a modern twist to {cuisine} cuisine with innovative approaches. "
+    elif "healthy" in idea_lower or "nutritious" in idea_lower or "wellness" in idea_lower:
+        positioning_base += f"focuses on healthy, nutritious {cuisine} options for health-conscious customers. "
+    elif "quick" in idea_lower or "fast" in idea_lower or "convenient" in idea_lower:
+        positioning_base += f"provides quick, convenient {cuisine} options for busy customers. "
+    elif "premium" in idea_lower or "luxury" in idea_lower or "high-end" in idea_lower:
+        positioning_base += f"delivers premium {cuisine} experiences with high-quality ingredients and service. "
+    elif "affordable" in idea_lower or "budget" in idea_lower or "cheap" in idea_lower:
+        positioning_base += f"makes {cuisine} cuisine accessible with affordable pricing and good value. "
+    else:
+        # Generic but still based on the concept
+        positioning_base += f"brings {cuisine} flavors to {location_city} with a focus on quality and customer satisfaction. "
+    
+    # Add what makes it different from competitors
+    positioning = positioning_base + f"Positioned to serve {target_customers if target_customers else 'local customers'} "
+    positioning += f"who are looking for {business_idea.split()[0:5]} " if len(business_idea.split()) > 5 else ""
+    positioning += f"in the {location_city} market."
     
     # Add dietary focus to positioning if specified
     if dietary_focus:
@@ -293,25 +314,28 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Adapt customer segment
     best_customer_segment = target_customers.split(",")[0].strip() if target_customers else "Local food enthusiasts"
     
-    # Adapt key recommendation based on business type, budget, and dietary focus
+    # Build key recommendation that addresses the SPECIFIC business idea
+    # Consider the business idea's unique challenges and opportunities
+    key_recommendation = f"For your {business_idea.strip()}: "
+    
+    # Tailor recommendation based on budget AND business idea complexity
     if "under 5,000" in budget.lower():
-        key_recommendation = (
-            f"Start with a minimal viable product approach—focus on 3-5 signature items that can be prepared "
-            f"efficiently with limited equipment. Test your concept at local markets or pop-up events before "
-            f"committing to a permanent location. This minimizes risk while validating demand and gathering "
-            f"customer feedback to refine your offering."
+        key_recommendation += (
+            f"Start with a minimal viable product approach—focus on 3-5 signature items that align with your concept "
+            f"and can be prepared efficiently with limited equipment. Test at local markets or pop-up events before "
+            f"committing to a permanent location. This minimizes risk while validating demand."
         )
     elif business_type in ["Food truck", "Market stall"]:
-        key_recommendation = (
+        key_recommendation += (
             f"Launch with a mobile operation to test multiple locations and identify your best customer base. "
-            f"Focus on 5-7 core menu items that travel well and can be prepared quickly. Track sales by location "
-            f"and time to optimize your schedule before considering a fixed location."
+            f"Focus on 5-7 core menu items that reflect your unique concept and can be prepared quickly. "
+            f"Track sales by location and time to optimize your schedule."
         )
     else:
-        key_recommendation = (
+        key_recommendation += (
             f"Begin with a soft launch period of 2-4 weeks to refine operations and gather customer feedback. "
-            f"Start with a focused menu of 6-8 items that showcase your concept while keeping prep manageable. "
-            f"Use this period to optimize pricing, portions, and service flow before your official grand opening."
+            f"Start with a focused menu of 6-8 items that showcase what makes your concept unique. "
+            f"Use this period to optimize pricing, portions, and service flow."
         )
     
     # Add dietary-specific recommendation if applicable
@@ -322,32 +346,62 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Generate adapted menu items based on cuisine
     menu_items = _generate_menu_items(cuisine, dietary_focus)
     
-    # Generate adapted risks with dietary considerations
-    main_risks = [
-        f"Market awareness of {cuisine} cuisine in {location_city} may require customer education and marketing investment",
-        f"Operational challenges during peak hours could impact service quality and customer satisfaction",
-        f"Ingredient sourcing for authentic {cuisine} items may affect costs or require supplier relationships",
-        f"Seasonal demand fluctuations typical in {location_city} may impact revenue consistency",
-    ]
+    # Generate risks that are SPECIFIC to the business idea
+    main_risks = []
+    
+    # Risk 1: Market awareness (tailored to the specific concept)
+    if "new" in idea_lower or "innovative" in idea_lower or "unique" in idea_lower:
+        main_risks.append(
+            f"As a new concept ({business_idea.strip()}), customer education and marketing will be critical to build awareness in {location_city}"
+        )
+    else:
+        main_risks.append(
+            f"Market awareness of this specific concept in {location_city} may require customer education and marketing investment"
+        )
+    
+    # Risk 2: Operational challenges (specific to business type and idea)
+    if business_type in ["Food truck", "Market stall", "Coffee kiosk"]:
+        main_risks.append(
+            f"Mobile/kiosk operations face weather dependency, location permits, and limited prep space challenges"
+        )
+    else:
+        main_risks.append(
+            f"Operational challenges during peak hours could impact service quality and customer satisfaction"
+        )
+    
+    # Risk 3: Ingredient/supply chain (based on cuisine and concept)
+    if "authentic" in idea_lower or "traditional" in idea_lower:
+        main_risks.append(
+            f"Sourcing authentic ingredients for {cuisine} items may increase costs or require specialized supplier relationships"
+        )
+    else:
+        main_risks.append(
+            f"Ingredient sourcing and supply chain management may affect costs and menu consistency"
+        )
+    
+    # Risk 4: Market-specific risk
+    main_risks.append(
+        f"Seasonal demand fluctuations and local market conditions in {location_city} may impact revenue consistency"
+    )
     
     # Add dietary-specific risks
     dietary_risks = _get_dietary_risks(dietary_focus)
     if dietary_risks:
-        main_risks.extend(dietary_risks)
+        main_risks.extend(dietary_risks[:1])  # Add only 1 dietary risk to keep list manageable
     
-    # Generate next steps
+    # Generate next steps that are ACTIONABLE and SPECIFIC to the business idea
     next_steps = [
-        f"Conduct market research with 30-50 potential customers in {location_city} to validate menu appeal and pricing",
-        f"Source ingredients from local suppliers and calculate exact cost per portion for each menu item",
-        f"Create social media presence with 10-15 posts showcasing your {cuisine} concept before launch",
-        f"Develop operational workflows and test them for 3-5 days to identify and resolve bottlenecks",
+        f"Conduct market research with 30-50 potential customers in {location_city} to validate the appeal of your specific concept: {business_idea.strip()}",
+        f"Source ingredients needed for your {cuisine} menu and calculate exact cost per portion for each item",
+        f"Create social media presence with 10-15 posts showcasing what makes your concept unique before launch",
+        f"Develop and test operational workflows for 3-5 days to ensure you can deliver on your concept efficiently",
     ]
     
     # Generate customer personas
     customer_personas = _generate_customer_personas(target_customers, location_city, cuisine)
     
-    # Generate marketing content
-    marketing = _generate_marketing_content(cuisine, location_city, business_type)
+    # Generate marketing content (pass business_idea for personalization)
+    marketing = _generate_marketing_content(cuisine, location_city, business_type, business_idea)
     
     # Generate launch checklist
     launch_checklist = _generate_launch_checklist(business_type, cuisine, location_city)
@@ -893,26 +947,41 @@ def _generate_customer_personas(target_customers: str, location: str, cuisine: s
     return personas[:3]
 
 
-def _generate_marketing_content(cuisine: str, location: str, business_type: str) -> dict[str, Any]:
-    """Generate marketing content based on concept."""
+def _generate_marketing_content(cuisine: str, location: str, business_type: str, business_idea: str = "") -> dict[str, Any]:
+    """Generate marketing content based on concept and business idea."""
     cuisine_hashtag = cuisine.replace(" / ", "").replace(" ", "")
     location_hashtag = location.split(",")[0].replace(" ", "")
     
+    # Extract key selling points from business idea if provided
+    idea_lower = business_idea.lower() if business_idea else ""
+    
+    # Create slogan that reflects the unique concept
+    if "authentic" in idea_lower or "traditional" in idea_lower:
+        slogan = f"Authentic {cuisine} in {location}—where tradition meets taste."
+    elif "modern" in idea_lower or "innovative" in idea_lower:
+        slogan = f"Modern {cuisine} in {location}—tradition reimagined."
+    elif "healthy" in idea_lower or "wellness" in idea_lower:
+        slogan = f"Healthy {cuisine} in {location}—nourish your body and soul."
+    elif "quick" in idea_lower or "fast" in idea_lower:
+        slogan = f"Quick {cuisine} in {location}—great food, no wait."
+    else:
+        slogan = f"{cuisine} in {location}—{business_idea.split('.')[0] if business_idea else 'where flavor meets passion'}."
+    
     return {
-        "slogan": f"Authentic {cuisine} in {location}—where tradition meets taste.",
+        "slogan": slogan[:100],  # Keep it concise
         "instagram_bio": (
-            f"🍽️ Authentic {cuisine} in {location} | Fresh ingredients, traditional recipes | "
+            f"🍽️ {business_idea.split('.')[0] if business_idea else f'{cuisine} in {location}'} | "
             f"📍 {location} | DM for reservations & catering"
-        ),
+        )[:150],  # Instagram bio limit
         "captions": [
-            f"Bringing authentic {cuisine} flavors to {location}. Who's ready to taste tradition? 🍽️✨ #{cuisine_hashtag} #{location_hashtag} Food",
-            f"Every dish tells a story. Come experience {cuisine} the way it's meant to be. 🌟 #Authentic{cuisine_hashtag} #FoodLovers",
-            f"Fresh ingredients, traditional recipes, unforgettable flavors. This is {cuisine} in {location}. 🔥 #{location_hashtag} Eats #{cuisine_hashtag} Cuisine",
+            f"Bringing {business_idea.split('.')[0].lower() if business_idea else f'{cuisine} flavors'} to {location}. Who's ready? 🍽️✨ #{cuisine_hashtag} #{location_hashtag}Food",
+            f"Every dish tells a story. Come experience what makes us unique. 🌟 #{cuisine_hashtag} #FoodLovers",
+            f"Fresh ingredients, passion, and flavor. This is {cuisine} in {location}. 🔥 #{location_hashtag}Eats #{cuisine_hashtag}Cuisine",
         ],
         "launch_announcement": (
-            f"Launch strategy: Start with a soft opening to test operations and gather feedback. "
-            f"Focus on 5-7 signature {cuisine} dishes that showcase your concept. Use social media "
-            f"to build anticipation with behind-the-scenes content and teasers. Offer a special "
+            f"Launch strategy: Start with a soft opening to test operations and gather feedback on your unique concept. "
+            f"Focus on 5-7 signature dishes that showcase what makes your {business_type.lower()} different. Use social media "
+            f"to build anticipation with behind-the-scenes content highlighting your concept. Offer a special "
             f"promotion for the first week to drive trial and word-of-mouth. Collect customer "
             f"feedback and adjust based on real data before the grand opening."
         ),

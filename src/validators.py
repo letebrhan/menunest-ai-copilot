@@ -8,6 +8,7 @@ data quality standards.
 from __future__ import annotations
 
 import json
+import re
 from typing import Any
 
 from pydantic import BaseModel, Field, ValidationError, validator
@@ -204,3 +205,118 @@ def safe_parse_json(raw_text: str) -> dict[str, Any] | None:
         return parsed
     except json.JSONDecodeError:
         return None
+
+
+def validate_business_idea(business_idea: str) -> tuple[bool, str]:
+    """Validate that the business idea is clear and meaningful.
+    
+    This function checks for:
+    - Empty or whitespace-only input
+    - Very short input (less than 10 characters)
+    - Gibberish or random text patterns
+    - Lack of food-related context
+    
+    Args:
+        business_idea: The business idea text to validate
+        
+    Returns:
+        Tuple of (is_valid, error_message) where error_message is empty if valid
+    """
+    if not business_idea or not business_idea.strip():
+        return False, "Please enter a business idea. Describe your food business concept in 1-2 sentences."
+    
+    idea = business_idea.strip()
+    
+    # Check minimum length
+    if len(idea) < 10:
+        return False, "Please provide more details about your business idea (at least 10 characters)."
+    
+    # Check for gibberish patterns
+    # 1. Too many repeated characters (e.g., "aaaaaaa", "123123123")
+    if re.search(r'(.)\1{4,}', idea):
+        return False, "Please enter a clear food business idea. The text appears to contain repeated characters."
+    
+    # 2. Too many consecutive consonants or vowels (gibberish indicator)
+    if re.search(r'[bcdfghjklmnpqrstvwxyz]{7,}', idea.lower()):
+        return False, "Please enter a clear food business idea. The text doesn't appear to be meaningful."
+    
+    # 3. Random keyboard patterns (e.g., "asdfghjkl", "qwertyuiop")
+    keyboard_patterns = [
+        'qwertyuiop', 'asdfghjkl', 'zxcvbnm',
+        'qwerty', 'asdfgh', 'zxcvb',
+        '1234567890', '0987654321'
+    ]
+    idea_lower = idea.lower().replace(' ', '')
+    for pattern in keyboard_patterns:
+        if pattern in idea_lower or pattern[::-1] in idea_lower:
+            return False, "Please enter a clear food business idea. The text appears to be random keyboard input."
+    
+    # 4. Check for excessive numbers or special characters (>50% of content)
+    alphanumeric_chars = sum(c.isalnum() for c in idea)
+    letter_chars = sum(c.isalpha() for c in idea)
+    if alphanumeric_chars > 0 and letter_chars / alphanumeric_chars < 0.5:
+        return False, "Please enter a clear food business idea using mostly letters and words."
+    
+    # 5. Check for at least some recognizable words (at least 2 words with 3+ letters)
+    words = re.findall(r'\b[a-zA-Z]{3,}\b', idea)
+    if len(words) < 2:
+        return False, "Please describe your food business idea using complete words and sentences."
+    
+    # 6. Check for food/business context (optional but helpful)
+    # This is a soft check - we look for food-related or business-related terms
+    food_business_keywords = [
+        'food', 'restaurant', 'cafe', 'coffee', 'kitchen', 'chef', 'cook', 'meal',
+        'breakfast', 'lunch', 'dinner', 'snack', 'drink', 'beverage', 'menu',
+        'cuisine', 'dish', 'recipe', 'bakery', 'bar', 'grill', 'bistro', 'deli',
+        'catering', 'truck', 'kiosk', 'stall', 'market', 'shop', 'store',
+        'pizza', 'burger', 'sandwich', 'salad', 'soup', 'pasta', 'rice', 'bread',
+        'vegan', 'vegetarian', 'organic', 'healthy', 'fresh', 'local',
+        'serve', 'serving', 'offer', 'sell', 'selling', 'business', 'customers',
+        'ethiopian', 'italian', 'mexican', 'indian', 'chinese', 'japanese', 'thai',
+        'mediterranean', 'asian', 'american', 'french', 'greek', 'middle eastern'
+    ]
+    
+    idea_lower_words = idea.lower().split()
+    has_food_context = any(
+        keyword in idea_lower or 
+        any(keyword in word for word in idea_lower_words)
+        for keyword in food_business_keywords
+    )
+    
+    if not has_food_context:
+        # This is a warning, not a hard failure - allow it but could be improved
+        # We don't block it because the user might describe a food business in unique ways
+        pass
+    
+    return True, ""
+
+
+def validate_user_inputs(user_inputs: dict[str, Any]) -> tuple[bool, str]:
+    """Validate user inputs before generating a launch plan.
+    
+    This function performs comprehensive validation of all user inputs
+    to ensure they are suitable for generating a meaningful launch plan.
+    
+    Args:
+        user_inputs: Dictionary containing all user form inputs
+        
+    Returns:
+        Tuple of (is_valid, error_message) where error_message is empty if valid
+    """
+    # Validate business idea
+    business_idea = user_inputs.get("business_idea", "")
+    is_valid, error_msg = validate_business_idea(business_idea)
+    if not is_valid:
+        return False, error_msg
+    
+    # Validate other required fields
+    location = user_inputs.get("location", "")
+    if not location or not location.strip():
+        return False, "Please provide a location for your business."
+    
+    cuisine = user_inputs.get("cuisine", "")
+    if not cuisine or not cuisine.strip() or cuisine == "Other / Custom":
+        return False, "Please specify a cuisine type."
+    
+    # All validations passed
+    return True, ""
