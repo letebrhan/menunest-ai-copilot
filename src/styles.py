@@ -863,7 +863,7 @@ def get_custom_css() -> str:
         margin: 0.25rem !important;
     }
     
-    /* Form labels - consistent sizing */
+    /* Form labels - consistent sizing with better spacing */
     .stTextInput > label,
     .stTextArea > label,
     .stSelectbox > label,
@@ -871,7 +871,7 @@ def get_custom_css() -> str:
         color: #2d3748 !important;
         font-weight: 600 !important;
         font-size: 0.9rem !important;
-        margin-bottom: 0.4rem !important;
+        margin-bottom: 0.6rem !important;
         display: block !important;
     }
     
