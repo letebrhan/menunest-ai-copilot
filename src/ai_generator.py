@@ -116,7 +116,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
         "esploratori di cibo culturale e i professionisti attenti al tempo che cercano "
         "qualcosa oltre il solito cornetto e cappuccino."
     )
-    localized["estimated_complexity"] = "Media"
+    localized["estimated_complexity"] = "Medium"
     localized["best_customer_segment"] = "Pendolari mattutini 25-45 anni"
     localized["key_recommendation"] = (
         "Lancia con un carretto mobile o chiosco temporaneo vicino a Porta Garibaldi o "
@@ -140,12 +140,14 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
     ]
 
     # Menu items localization
+    # NOTE: Keep complexity values in English ("Low", "Medium", "High") for validation
+    # Only translate user-facing text fields
     localized["menu_items"] = [
         {
             "name": "Caffè Etiope (Buna)",
             "category": "Bevanda",
             "description": "Caffè ricco e aromatico preparato con metodi tradizionali etiopi con cardamomo opzionale.",
-            "complexity": "Bassa",
+            "complexity": "Low",
             "suggested_price": "2.50-3.50 EUR",
             "pricing_note": "Prezzo competitivo con caffetterie specializzate (fascia 2.80-3.20 EUR) enfatizzando autenticità ed esperienza culturale.",
             "ingredients": ["Chicchi di caffè etiope", "Acqua", "Cardamomo (opzionale)", "Zucchero (opzionale)"],
@@ -157,7 +159,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
             "name": "Tè Speziato (Shai)",
             "category": "Bevanda",
             "description": "Tè nero riscaldante infuso con cannella, zenzero e chiodi di garofano, servito con o senza latte.",
-            "complexity": "Bassa",
+            "complexity": "Low",
             "suggested_price": "2.50-3.00 EUR",
             "pricing_note": "Posiziona come alternativa premium al tè standard, evidenziando la miscela di spezie come punto di vendita unico.",
             "ingredients": ["Tè nero", "Acqua", "Cannella", "Zenzero", "Chiodi di garofano", "Latte (opzionale)", "Zucchero (opzionale)"],
@@ -169,7 +171,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
             "name": "Sambusa (Lenticchie)",
             "category": "Snack",
             "description": "Pasta triangolare croccante ripiena di lenticchie speziate, cipolle e jalapeño, servita calda.",
-            "complexity": "Media",
+            "complexity": "Medium",
             "suggested_price": "2.80-3.50 EUR",
             "pricing_note": "Prezzo per pezzo o offri combo 2-per-5 EUR. Prodotto con buon margine se la preparazione è efficiente.",
             "ingredients": ["Farina di grano", "Lenticchie", "Cipolla", "Jalapeño", "Aglio", "Cumino", "Curcuma", "Olio vegetale"],
@@ -181,7 +183,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
             "name": "Ciotola Ful Medames",
             "category": "Colazione",
             "description": "Sostanzioso stufato di fave con pomodori, cipolle e olio d'oliva, servito con pane fresco per intingere.",
-            "complexity": "Media",
+            "complexity": "Medium",
             "suggested_price": "6.50-8.00 EUR",
             "pricing_note": "Posiziona come alternativa di colazione sostanziosa e ricca di proteine ai dolci. Target studenti e lavoratori attenti al budget.",
             "ingredients": ["Fave", "Pomodori", "Cipolla", "Aglio", "Olio d'oliva", "Succo di limone", "Cumino", "Pane fresco"],
@@ -193,7 +195,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
             "name": "Colazione Firfir",
             "category": "Colazione",
             "description": "Pezzi di injera strappati mescolati con salsa berbere speziata e uova strapazzate, un piatto mattutino tradizionale.",
-            "complexity": "Media",
+            "complexity": "Medium",
             "suggested_price": "7.00-8.50 EUR",
             "pricing_note": "Prodotto colazione premium. Richiede educazione del cliente ma ha alto valore percepito per esploratori di cibo culturale.",
             "ingredients": ["Injera", "Uova", "Spezia berbere", "Cipolla", "Pomodoro", "Olio d'oliva", "Erbe fresche"],
@@ -205,7 +207,7 @@ def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
             "name": "Ciotola Shiro Wat",
             "category": "Colazione",
             "description": "Cremoso stufato di farina di ceci con spezie etiopi, servito con injera o pane.",
-            "complexity": "Media",
+            "complexity": "Medium",
             "suggested_price": "6.00-7.50 EUR",
             "pricing_note": "Eccellente opzione vegetariana/vegana con buoni margini. La farina di ceci è conveniente e stabile a scaffale.",
             "ingredients": ["Farina di ceci", "Cipolla", "Aglio", "Spezia berbere", "Pomodoro", "Olio vegetale", "Injera o pane"],

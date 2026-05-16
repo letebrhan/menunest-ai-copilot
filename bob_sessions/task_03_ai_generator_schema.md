@@ -5147,3 +5147,1224 @@ The system now provides reliable, consistent launch plans with all required sect
 </result>
 </attempt_completion>
 
+---
+
+**User:**
+
+[attempt_completion] Result:
+The user has provided feedback on the results. Consider their input to continue the task, and then attempt completion again.
+<feedback>
+I tested the app after your Task 3 changes.
+
+Bug found:
+- Demo mode works when Output Language is English.
+- When I change Output Language to Italian and click "Generate Launch Plan", the app shows:
+  "Generation Error: The generated launch plan did not pass validation."
+
+Please debug and fix this.
+
+Focus on:
+1. Compare the English and Italian demo fallback output structures.
+2. Ensure Italian output uses exactly the same schema/keys as English.
+3. Ensure all required sections are present:
+   Overview
+   Menu & Pricing
+   Ingredients & Allergens
+   Customers
+   Marketing
+   Launch Checklist
+   Export
+4. Ensure validators.py accepts translated text values but still validates the same fixed schema keys.
+5. Do not translate internal JSON keys. Only translate user-facing text values.
+6. Add or update tests to verify demo mode works for English and Italian.
+7. Keep the app title exactly "MenuNest: AI Copilot for Food Entrepreneurs".
+8. Do not expose or print API keys or secrets.
+9. Explain the root cause and what you changed.
+
+This is still Task 3, so keep the fix focused on AI generator schema, sample data, validation, and language reliability.
+</feedback>
+<environment_details>
+# VSCode Visible Files
+bob_sessions/task_03_ai_generator_schema.md
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/ai_generator.py,src/validators.py,bob_sessions/task_03_ai_generator_schema.md,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:02:18.950Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$3.31
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+I need to debug the Italian language validation issue. Let me check what's happening with the Italian localization:
+
+<read_file>
+<args>
+<file>
+<path>src/ai_generator.py</path>
+<line_range>55-250</line_range>
+</file>
+</args>
+</read_file>
+
+---
+
+**User:**
+
+[read_file for 'src/ai_generator.py'. Reading multiple files at once is more efficient for the LLM. If other files are relevant to your current task, please read them simultaneously.] Result:
+<files>
+<file><path>src/ai_generator.py</path>
+<content lines="55-250">
+ 55 |         plan = coerce_launch_plan(SAMPLE_LAUNCH_PLAN)
+ 56 |         
+ 57 |         # Apply language localization if requested
+ 58 |         if output_language == "Italian":
+ 59 |             plan = localize_demo_plan_to_italian(plan)
+ 60 |         elif output_language == "English":
+ 61 |             # English is the default, no transformation needed
+ 62 |             pass
+ 63 |         
+ 64 |         return plan
+ 65 | 
+ 66 |     # Live AI mode: Build prompt and call external provider
+ 67 |     # Note: This is a placeholder for future LLM integration
+ 68 |     prompt = build_launch_plan_prompt(user_inputs)
+ 69 |     
+ 70 |     # TODO: Implement actual LLM provider calls here
+ 71 |     # Example structure:
+ 72 |     # if provider == "openai":
+ 73 |     #     response = call_openai_api(prompt)
+ 74 |     # elif provider == "anthropic":
+ 75 |     #     response = call_anthropic_api(prompt)
+ 76 |     # elif provider == "watsonx":
+ 77 |     #     response = call_watsonx_api(prompt)
+ 78 |     
+ 79 |     # For now, fall back to demo data even in "live" mode
+ 80 |     # This ensures the app never fails during demos
+ 81 |     plan = coerce_launch_plan(SAMPLE_LAUNCH_PLAN)
+ 82 |     
+ 83 |     if output_language == "Italian":
+ 84 |         plan = localize_demo_plan_to_italian(plan)
+ 85 |     
+ 86 |     return plan
+ 87 | 
+ 88 | 
+ 89 | def localize_demo_plan_to_italian(plan: dict[str, Any]) -> dict[str, Any]:
+ 90 |     """Return an Italian version of the demo launch plan.
+ 91 | 
+ 92 |     This function provides comprehensive Italian localization while maintaining
+ 93 |     the same data structure for validation, rendering, and export compatibility.
+ 94 |     
+ 95 |     Args:
+ 96 |         plan: English version of the launch plan
+ 97 |         
+ 98 |     Returns:
+ 99 |         Italian-localized version of the launch plan
+100 |     """
+101 |     localized = dict(plan)
+102 | 
+103 |     # Overview section
+104 |     localized["business_summary"] = (
+105 |         "Un chiosco di caffè e colazione etiope rivolto ai pendolari milanesi, "
+106 |         "studenti universitari e lavoratori d'ufficio che cercano opzioni di colazione "
+107 |         "autentiche, convenienti e culturalmente ricche. Il concept si concentra su 5-6 "
+108 |         "prodotti distintivi che possono essere preparati efficientemente durante la "
+109 |         "fascia mattutina, introducendo i clienti ai sapori tradizionali dell'Africa orientale."
+110 |     )
+111 |     localized["positioning"] = (
+112 |         "L'unica esperienza autentica di colazione etiope nei distretti business di Milano, "
+113 |         "che offre la qualità della cerimonia del caffè tradizionale in formato fast-casual. "
+114 |         "Posizionato tra le catene di caffè generiche (prive di autenticità) e i ristoranti "
+115 |         "con servizio al tavolo (troppo lenti per i pendolari), colmando un vuoto per gli "
+116 |         "esploratori di cibo culturale e i professionisti attenti al tempo che cercano "
+117 |         "qualcosa oltre il solito cornetto e cappuccino."
+118 |     )
+119 |     localized["estimated_complexity"] = "Media"
+120 |     localized["best_customer_segment"] = "Pendolari mattutini 25-45 anni"
+121 |     localized["key_recommendation"] = (
+122 |         "Lancia con un carretto mobile o chiosco temporaneo vicino a Porta Garibaldi o "
+123 |         "Stazione Centrale per 4-6 settimane per validare la domanda e perfezionare le "
+124 |         "operazioni prima di impegnarsi in un contratto di locazione fissa. Concentrati "
+125 |         "sul perfezionare 3 prodotti principali (caffè, sambusa e una ciotola per colazione) "
+126 |         "prima di espandere il menu. Questo approccio minimizza il rischio costruendo una "
+127 |         "base clienti e raccogliendo dati reali sui prezzi."
+128 |     )
+129 |     localized["main_risks"] = [
+130 |         "Limitata consapevolezza del marchio sulla cultura della colazione etiope a Milano potrebbe richiedere significativa educazione del cliente",
+131 |         "Pressione operativa durante la fascia mattutina con preparazioni complesse potrebbe portare a inconsistenza qualitativa o lunghi tempi di attesa",
+132 |         "Sfide nell'approvvigionamento di ingredienti per spezie autentiche e farina di teff potrebbero aumentare i costi o richiedere sostituzioni",
+133 |         "Fluttuazioni stagionali della domanda durante le vacanze estive e le chiusure di agosto tipiche di Milano",
+134 |     ]
+135 |     localized["next_steps"] = [
+136 |         "Conduci test di assaggio con 30-50 potenziali clienti vicino alle location target per validare l'appeal del menu e raccogliere feedback sui prezzi",
+137 |         "Procura ingredienti da negozi specializzati africani a Milano (zona Via Padova) e calcola il costo esatto per porzione di ogni voce del menu",
+138 |         "Crea una presenza Instagram semplice con 10-15 post che mostrano la preparazione del cibo, il contesto culturale e testimonianze dei clienti prima del lancio",
+139 |         "Sviluppa una checklist di preparazione mattutina di 2 ore e testala per 3 giorni per identificare colli di bottiglia e ottimizzare il flusso di lavoro",
+140 |     ]
+141 | 
+142 |     # Menu items localization
+143 |     localized["menu_items"] = [
+144 |         {
+145 |             "name": "Caffè Etiope (Buna)",
+146 |             "category": "Bevanda",
+147 |             "description": "Caffè ricco e aromatico preparato con metodi tradizionali etiopi con cardamomo opzionale.",
+148 |             "complexity": "Bassa",
+149 |             "suggested_price": "2.50-3.50 EUR",
+150 |             "pricing_note": "Prezzo competitivo con caffetterie specializzate (fascia 2.80-3.20 EUR) enfatizzando autenticità ed esperienza culturale.",
+151 |             "ingredients": ["Chicchi di caffè etiope", "Acqua", "Cardamomo (opzionale)", "Zucchero (opzionale)"],
+152 |             "allergens": ["Nessuno comune"],
+153 |             "preparation_note": "Tosta i chicchi freschi ogni giorno se possibile, o procura pre-tostati da negozi specializzati africani. Prepara in jebena tradizionale o usa French press per velocità.",
+154 |             "operational_tip": "Prepara in lotti di 8-10 porzioni durante la fascia mattutina (7-9). Offri tazzine di assaggio ai clienti curiosi per costruire interesse.",
+155 |         },
+156 |         {
+157 |             "name": "Tè Speziato (Shai)",
+158 |             "category": "Bevanda",
+159 |             "description": "Tè nero riscaldante infuso con cannella, zenzero e chiodi di garofano, servito con o senza latte.",
+160 |             "complexity": "Bassa",
+161 |             "suggested_price": "2.50-3.00 EUR",
+162 |             "pricing_note": "Posiziona come alternativa premium al tè standard, evidenziando la miscela di spezie come punto di vendita unico.",
+163 |             "ingredients": ["Tè nero", "Acqua", "Cannella", "Zenzero", "Chiodi di garofano", "Latte (opzionale)", "Zucchero (opzionale)"],
+164 |             "allergens": ["Latte (se aggiunto)"],
+165 |             "preparation_note": "Pre-miscela le spezie secche in grandi quantità per risparmiare tempo. Lascia in infusione per 3-4 minuti per sapore ottimale senza amarezza.",
+166 |             "operational_tip": "Default senza latticini a meno che non sia richiesto. Tieni latte d'avena come alternativa per clienti intolleranti al lattosio.",
+167 |         },
+168 |         {
+169 |             "name": "Sambusa (Lenticchie)",
+170 |             "category": "Snack",
+171 |             "description": "Pasta triangolare croccante ripiena di lenticchie speziate, cipolle e jalapeño, servita calda.",
+172 |             "complexity": "Media",
+173 |             "suggested_price": "2.80-3.50 EUR",
+174 |             "pricing_note": "Prezzo per pezzo o offri combo 2-per-5 EUR. Prodotto con buon margine se la preparazione è efficiente.",
+175 |             "ingredients": ["Farina di grano", "Lenticchie", "Cipolla", "Jalapeño", "Aglio", "Cumino", "Curcuma", "Olio vegetale"],
+176 |             "allergens": ["Glutine", "Può contenere tracce di sesamo"],
+177 |             "preparation_note": "Prepara il ripieno la sera prima. Assembla e friggi fresco ogni mattina. Può essere mantenuto caldo per massimo 2-3 ore.",
+178 |             "operational_tip": "Monitora attentamente gli sprechi—i fritti perdono qualità dopo 3 ore. Inizia con 20-30 pezzi e aggiusta in base ai pattern di domanda.",
+179 |         },
+180 |         {
+181 |             "name": "Ciotola Ful Medames",
+182 |             "category": "Colazione",
+183 |             "description": "Sostanzioso stufato di fave con pomodori, cipolle e olio d'oliva, servito con pane fresco per intingere.",
+184 |             "complexity": "Media",
+185 |             "suggested_price": "6.50-8.00 EUR",
+186 |             "pricing_note": "Posiziona come alternativa di colazione sostanziosa e ricca di proteine ai dolci. Target studenti e lavoratori attenti al budget.",
+187 |             "ingredients": ["Fave", "Pomodori", "Cipolla", "Aglio", "Olio d'oliva", "Succo di limone", "Cumino", "Pane fresco"],
+188 |             "allergens": ["Glutine (pane)", "Può contenere tracce di sesamo"],
+189 |             "preparation_note": "Cuoci le fave in grandi lotti (possono essere refrigerate per 3 giorni). Riscalda porzioni individuali e finisci con condimenti freschi.",
+190 |             "operational_tip": "Offri dimensioni piccola (5 EUR) e regolare (7 EUR). La dimensione piccola ha margini migliori e riduce gli sprechi per domanda incerta.",
+191 |         },
+192 |         {
+193 |             "name": "Colazione Firfir",
+194 |             "category": "Colazione",
+195 |             "description": "Pezzi di injera strappati mescolati con salsa berbere speziata e uova strapazzate, un piatto mattutino tradizionale.",
+196 |             "complexity": "Media",
+197 |             "suggested_price": "7.00-8.50 EUR",
+198 |             "pricing_note": "Prodotto colazione premium. Richiede educazione del cliente ma ha alto valore percepito per esploratori di cibo culturale.",
+199 |             "ingredients": ["Injera", "Uova", "Spezia berbere", "Cipolla", "Pomodoro", "Olio d'oliva", "Erbe fresche"],
+200 |             "allergens": ["Uova", "Glutine (injera)", "Piccante (berbere)"],
+201 |             "preparation_note": "Pre-strappa l'injera e conserva in contenitore ermetico. Cuoci le uova fresche su ordinazione (2-3 minuti per porzione).",
+202 |             "operational_tip": "Inizia a offrire questo dopo la settimana 2 una volta che caffè e sambusa funzionano bene. Richiede più spiegazione ai clienti.",
+203 |         },
+204 |         {
+205 |             "name": "Ciotola Shiro Wat",
+206 |             "category": "Colazione",
+207 |             "description": "Cremoso stufato di farina di ceci con spezie etiopi, servito con injera o pane.",
+208 |             "complexity": "Media",
+209 |             "suggested_price": "6.00-7.50 EUR",
+210 |             "pricing_note": "Eccellente opzione vegetariana/vegana con buoni margini. La farina di ceci è conveniente e stabile a scaffale.",
+211 |             "ingredients": ["Farina di ceci", "Cipolla", "Aglio", "Spezia berbere", "Pomodoro", "Olio vegetale", "Injera o pane"],
+212 |             "allergens": ["Glutine (se servito con injera/pane)", "Piccante (berbere)"],
+213 |             "preparation_note": "Può essere preparato in grandi lotti e riscaldato. La consistenza dovrebbe essere densa ma versabile.",
+214 |             "operational_tip": "Evidenzia come vegano e ricco di proteine. Popolare con clienti attenti alla salute e vegetariani.",
+215 |         },
+216 |     ]
+217 | 
+218 |     # Customer personas localization
+219 |     localized["customer_personas"] = [
+220 |         {
+221 |             "name": "Marco - Il Pendolare Quotidiano",
+222 |             "profile": "Manager marketing 35enne che prende la metro da Porta Garibaldi al suo ufficio vicino al Duomo. Arriva alla stazione verso le 7:45, ha bisogno di colazione prima delle 8:15. Valorizza convenienza e coerenza.",
+223 |             "needs": "Servizio veloce (sotto 3 minuti), packaging portatile, abbastanza familiare da fidarsi ma abbastanza interessante da provare, prezzo ragionevole per acquisto quotidiano (sotto 6 EUR).",
+224 |             "recommended_offer": "Combo Caffè + Sambusa per 5.50 EUR. Veloce, portatile e diventa un rituale quotidiano.",
+225 |             "marketing_angle": "Salta il solito cornetto—prova qualcosa di audace e autentico che si adatta alla tua routine mattutina. Stessa velocità, storia migliore.",
+226 |         },
+227 |         {
+228 |             "name": "Sofia - La Studentessa Universitaria",
+229 |             "profile": "Studentessa di economia 22enne alla Bocconi. Attenta al budget ma interessata a cibo sano e sostanzioso. Spesso salta la colazione per costo o mancanza di opzioni appetibili vicino al campus.",
+230 |             "needs": "Conveniente (sotto 7 EUR), abbastanza sostanzioso da durare fino a pranzo, vegetariano-friendly, degno di Instagram per condivisione social.",
+231 |             "recommended_offer": "Ciotola Ful Medames (dimensione piccola) per 6.50 EUR o Ciotola Shiro Wat per 6.00 EUR. Entrambe sostanziose, convenienti e fotogeniche.",
+232 |             "marketing_angle": "Vera colazione che ti mantiene sazio durante le lezioni mattutine. Vegana, ricca di proteine e sotto 7 EUR. Il tuo portafoglio e il tuo corpo ti ringrazieranno.",
+233 |         },
+234 |         {
+235 |             "name": "Alessandro & Chiara - Gli Esploratori Culturali",
+236 |             "profile": "Coppia 28 e 30 anni che cerca attivamente esperienze culinarie internazionali autentiche. Seguono food blogger, provano nuovi ristoranti mensilmente e condividono scoperte sui social. Disposti a pagare premium per autenticità.",
+237 |             "needs": "Storia autentica e contesto culturale, sapori unici che non possono trovare altrove, opportunità fotografiche, staff amichevole che può spiegare il cibo.",
+238 |             "recommended_offer": "Esperienza cerimonia del caffè + colazione Firfir per 10-12 EUR. Posizionamento premium con educazione culturale.",
+239 |             "marketing_angle": "Vivi la cultura della colazione etiope senza volare ad Addis Abeba. Ricette tradizionali, ingredienti autentici e una storia che vale la pena condividere.",
+240 |         },
+241 |     ]
+242 | 
+243 |     # Marketing content localization
+244 |     localized["marketing"] = {
+245 |         "slogan": "Mattine etiopi, stile Milano—colazione autentica per la tua routine quotidiana.",
+246 |         "instagram_bio": (
+247 |             "🇪🇹 Colazione etiope autentica a Milano | Caffè tradizionale, sambusa calda e sapori culturali | "
+248 |             "📍 Porta Garibaldi (prossimamente) | DM per catering"
+249 |         ),
+250 |         "captions": [
+</content>
+</file>
+</files>
+<environment_details>
+# VSCode Visible Files
+bob_sessions/task_03_ai_generator_schema.md
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/ai_generator.py,src/validators.py,bob_sessions/task_03_ai_generator_schema.md,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:03:33.283Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$3.47
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+I found the issue! In the Italian localization, the `complexity` field values are translated ("Bassa" instead of "Low", "Media" instead of "Medium"), but the validator expects the exact English values "Low", "Medium", or "High". Let me fix this:
+
+<apply_diff>
+<path>src/ai_generator.py</path>
+<diff>
+<<<<<<< SEARCH
+:start_line:143
+-------
+    # Menu items localization
+    localized["menu_items"] = [
+        {
+            "name": "Caffè Etiope (Buna)",
+            "category": "Bevanda",
+            "description": "Caffè ricco e aromatico preparato con metodi tradizionali etiopi con cardamomo opzionale.",
+            "complexity": "Bassa",
+            "suggested_price": "2.50-3.50 EUR",
+            "pricing_note": "Prezzo competitivo con caffetterie specializzate (fascia 2.80-3.20 EUR) enfatizzando autenticità ed esperienza culturale.",
+            "ingredients": ["Chicchi di caffè etiope", "Acqua", "Cardamomo (opzionale)", "Zucchero (opzionale)"],
+            "allergens": ["Nessuno comune"],
+            "preparation_note": "Tosta i chicchi freschi ogni giorno se possibile, o procura pre-tostati da negozi specializzati africani. Prepara in jebena tradizionale o usa French press per velocità.",
+            "operational_tip": "Prepara in lotti di 8-10 porzioni durante la fascia mattutina (7-9). Offri tazzine di assaggio ai clienti curiosi per costruire interesse.",
+        },
+        {
+            "name": "Tè Speziato (Shai)",
+            "category": "Bevanda",
+            "description": "Tè nero riscaldante infuso con cannella, zenzero e chiodi di garofano, servito con o senza latte.",
+            "complexity": "Bassa",
+            "suggested_price": "2.50-3.00 EUR",
+            "pricing_note": "Posiziona come alternativa premium al tè standard, evidenziando la miscela di spezie come punto di vendita unico.",
+            "ingredients": ["Tè nero", "Acqua", "Cannella", "Zenzero", "Chiodi di garofano", "Latte (opzionale)", "Zucchero (opzionale)"],
+            "allergens": ["Latte (se aggiunto)"],
+            "preparation_note": "Pre-miscela le spezie secche in grandi quantità per risparmiare tempo. Lascia in infusione per 3-4 minuti per sapore ottimale senza amarezza.",
+            "operational_tip": "Default senza latticini a meno che non sia richiesto. Tieni latte d'avena come alternativa per clienti intolleranti al lattosio.",
+        },
+        {
+            "name": "Sambusa (Lenticchie)",
+            "category": "Snack",
+            "description": "Pasta triangolare croccante ripiena di lenticchie speziate, cipolle e jalapeño, servita calda.",
+            "complexity": "Media",
+            "suggested_price": "2.80-3.50 EUR",
+            "pricing_note": "Prezzo per pezzo o offri combo 2-per-5 EUR. Prodotto con buon margine se la preparazione è efficiente.",
+            "ingredients": ["Farina di grano", "Lenticchie", "Cipolla", "Jalapeño", "Aglio", "Cumino", "Curcuma", "Olio vegetale"],
+            "allergens": ["Glutine", "Può contenere tracce di sesamo"],
+            "preparation_note": "Prepara il ripieno la sera prima. Assembla e friggi fresco ogni mattina. Può essere mantenuto caldo per massimo 2-3 ore.",
+            "operational_tip": "Monitora attentamente gli sprechi—i fritti perdono qualità dopo 3 ore. Inizia con 20-30 pezzi e aggiusta in base ai pattern di domanda.",
+        },
+        {
+            "name": "Ciotola Ful Medames",
+            "category": "Colazione",
+            "description": "Sostanzioso stufato di fave con pomodori, cipolle e olio d'oliva, servito con pane fresco per intingere.",
+            "complexity": "Media",
+            "suggested_price": "6.50-8.00 EUR",
+            "pricing_note": "Posiziona come alternativa di colazione sostanziosa e ricca di proteine ai dolci. Target studenti e lavoratori attenti al budget.",
+            "ingredients": ["Fave", "Pomodori", "Cipolla", "Aglio", "Olio d'oliva", "Succo di limone", "Cumino", "Pane fresco"],
+            "allergens": ["Glutine (pane)", "Può contenere tracce di sesamo"],
+            "preparation_note": "Cuoci le fave in grandi lotti (possono essere refrigerate per 3 giorni). Riscalda porzioni individuali e finisci con condimenti freschi.",
+            "operational_tip": "Offri dimensioni piccola (5 EUR) e regolare (7 EUR). La dimensione piccola ha margini migliori e riduce gli sprechi per domanda incerta.",
+        },
+        {
+            "name": "Colazione Firfir",
+            "category": "Colazione",
+            "description": "Pezzi di injera strappati mescolati con salsa berbere speziata e uova strapazzate, un piatto mattutino tradizionale.",
+            "complexity": "Media",
+            "suggested_price": "7.00-8.50 EUR",
+            "pricing_note": "Prodotto colazione premium. Richiede educazione del cliente ma ha alto valore percepito per esploratori di cibo culturale.",
+            "ingredients": ["Injera", "Uova", "Spezia berbere", "Cipolla", "Pomodoro", "Olio d'oliva", "Erbe fresche"],
+            "allergens": ["Uova", "Glutine (injera)", "Piccante (berbere)"],
+            "preparation_note": "Pre-strappa l'injera e conserva in contenitore ermetico. Cuoci le uova fresche su ordinazione (2-3 minuti per porzione).",
+            "operational_tip": "Inizia a offrire questo dopo la settimana 2 una volta che caffè e sambusa funzionano bene. Richiede più spiegazione ai clienti.",
+        },
+        {
+            "name": "Ciotola Shiro Wat",
+            "category": "Colazione",
+            "description": "Cremoso stufato di farina di ceci con spezie etiopi, servito con injera o pane.",
+            "complexity": "Media",
+            "suggested_price": "6.00-7.50 EUR",
+            "pricing_note": "Eccellente opzione vegetariana/vegana con buoni margini. La farina di ceci è conveniente e stabile a scaffale.",
+            "ingredients": ["Farina di ceci", "Cipolla", "Aglio", "Spezia berbere", "Pomodoro", "Olio vegetale", "Injera o pane"],
+            "allergens": ["Glutine (se servito con injera/pane)", "Piccante (berbere)"],
+            "preparation_note": "Può essere preparato in grandi lotti e riscaldato. La consistenza dovrebbe essere densa ma versabile.",
+            "operational_tip": "Evidenzia come vegano e ricco di proteine. Popolare con clienti attenti alla salute e vegetariani.",
+        },
+    ]
+=======
+    # Menu items localization
+    # NOTE: Keep complexity values in English ("Low", "Medium", "High") for validation
+    # Only translate user-facing text fields
+    localized["menu_items"] = [
+        {
+            "name": "Caffè Etiope (Buna)",
+            "category": "Bevanda",
+            "description": "Caffè ricco e aromatico preparato con metodi tradizionali etiopi con cardamomo opzionale.",
+            "complexity": "Low",
+            "suggested_price": "2.50-3.50 EUR",
+            "pricing_note": "Prezzo competitivo con caffetterie specializzate (fascia 2.80-3.20 EUR) enfatizzando autenticità ed esperienza culturale.",
+            "ingredients": ["Chicchi di caffè etiope", "Acqua", "Cardamomo (opzionale)", "Zucchero (opzionale)"],
+            "allergens": ["Nessuno comune"],
+            "preparation_note": "Tosta i chicchi freschi ogni giorno se possibile, o procura pre-tostati da negozi specializzati africani. Prepara in jebena tradizionale o usa French press per velocità.",
+            "operational_tip": "Prepara in lotti di 8-10 porzioni durante la fascia mattutina (7-9). Offri tazzine di assaggio ai clienti curiosi per costruire interesse.",
+        },
+        {
+            "name": "Tè Speziato (Shai)",
+            "category": "Bevanda",
+            "description": "Tè nero riscaldante infuso con cannella, zenzero e chiodi di garofano, servito con o senza latte.",
+            "complexity": "Low",
+            "suggested_price": "2.50-3.00 EUR",
+            "pricing_note": "Posiziona come alternativa premium al tè standard, evidenziando la miscela di spezie come punto di vendita unico.",
+            "ingredients": ["Tè nero", "Acqua", "Cannella", "Zenzero", "Chiodi di garofano", "Latte (opzionale)", "Zucchero (opzionale)"],
+            "allergens": ["Latte (se aggiunto)"],
+            "preparation_note": "Pre-miscela le spezie secche in grandi quantità per risparmiare tempo. Lascia in infusione per 3-4 minuti per sapore ottimale senza amarezza.",
+            "operational_tip": "Default senza latticini a meno che non sia richiesto. Tieni latte d'avena come alternativa per clienti intolleranti al lattosio.",
+        },
+        {
+            "name": "Sambusa (Lenticchie)",
+            "category": "Snack",
+            "description": "Pasta triangolare croccante ripiena di lenticchie speziate, cipolle e jalapeño, servita calda.",
+            "complexity": "Medium",
+            "suggested_price": "2.80-3.50 EUR",
+            "pricing_note": "Prezzo per pezzo o offri combo 2-per-5 EUR. Prodotto con buon margine se la preparazione è efficiente.",
+            "ingredients": ["Farina di grano", "Lenticchie", "Cipolla", "Jalapeño", "Aglio", "Cumino", "Curcuma", "Olio vegetale"],
+            "allergens": ["Glutine", "Può contenere tracce di sesamo"],
+            "preparation_note": "Prepara il ripieno la sera prima. Assembla e friggi fresco ogni mattina. Può essere mantenuto caldo per massimo 2-3 ore.",
+            "operational_tip": "Monitora attentamente gli sprechi—i fritti perdono qualità dopo 3 ore. Inizia con 20-30 pezzi e aggiusta in base ai pattern di domanda.",
+        },
+        {
+            "name": "Ciotola Ful Medames",
+            "category": "Colazione",
+            "description": "Sostanzioso stufato di fave con pomodori, cipolle e olio d'oliva, servito con pane fresco per intingere.",
+            "complexity": "Medium",
+            "suggested_price": "6.50-8.00 EUR",
+            "pricing_note": "Posiziona come alternativa di colazione sostanziosa e ricca di proteine ai dolci. Target studenti e lavoratori attenti al budget.",
+            "ingredients": ["Fave", "Pomodori", "Cipolla", "Aglio", "Olio d'oliva", "Succo di limone", "Cumino", "Pane fresco"],
+            "allergens": ["Glutine (pane)", "Può contenere tracce di sesamo"],
+            "preparation_note": "Cuoci le fave in grandi lotti (possono essere refrigerate per 3 giorni). Riscalda porzioni individuali e finisci con condimenti freschi.",
+            "operational_tip": "Offri dimensioni piccola (5 EUR) e regolare (7 EUR). La dimensione piccola ha margini migliori e riduce gli sprechi per domanda incerta.",
+        },
+        {
+            "name": "Colazione Firfir",
+            "category": "Colazione",
+            "description": "Pezzi di injera strappati mescolati con salsa berbere speziata e uova strapazzate, un piatto mattutino tradizionale.",
+            "complexity": "Medium",
+            "suggested_price": "7.00-8.50 EUR",
+            "pricing_note": "Prodotto colazione premium. Richiede educazione del cliente ma ha alto valore percepito per esploratori di cibo culturale.",
+            "ingredients": ["Injera", "Uova", "Spezia berbere", "Cipolla", "Pomodoro", "Olio d'oliva", "Erbe fresche"],
+            "allergens": ["Uova", "Glutine (injera)", "Piccante (berbere)"],
+            "preparation_note": "Pre-strappa l'injera e conserva in contenitore ermetico. Cuoci le uova fresche su ordinazione (2-3 minuti per porzione).",
+            "operational_tip": "Inizia a offrire questo dopo la settimana 2 una volta che caffè e sambusa funzionano bene. Richiede più spiegazione ai clienti.",
+        },
+        {
+            "name": "Ciotola Shiro Wat",
+            "category": "Colazione",
+            "description": "Cremoso stufato di farina di ceci con spezie etiopi, servito con injera o pane.",
+            "complexity": "Medium",
+            "suggested_price": "6.00-7.50 EUR",
+            "pricing_note": "Eccellente opzione vegetariana/vegana con buoni margini. La farina di ceci è conveniente e stabile a scaffale.",
+            "ingredients": ["Farina di ceci", "Cipolla", "Aglio", "Spezia berbere", "Pomodoro", "Olio vegetale", "Injera o pane"],
+            "allergens": ["Glutine (se servito con injera/pane)", "Piccante (berbere)"],
+            "preparation_note": "Può essere preparato in grandi lotti e riscaldato. La consistenza dovrebbe essere densa ma versabile.",
+            "operational_tip": "Evidenzia come vegano e ricco di proteine. Popolare con clienti attenti alla salute e vegetariani.",
+        },
+    ]
+>>>>>>> REPLACE
+</diff>
+</apply_diff>
+
+---
+
+**User:**
+
+[apply_diff for 'src/ai_generator.py'] Result:
+<file_write_result>
+<path>src/ai_generator.py</path>
+<operation>modified</operation>
+<notice>
+<i>You do not need to re-read the file, as you have seen all changes</i>
+<i>Proceed with the task using these changes as the new baseline.</i>
+</notice>
+</file_write_result>
+
+<notice>Making multiple related changes in a single apply_diff is more efficient. If other changes are needed in this file, please include them as additional SEARCH/REPLACE blocks.</notice>
+<environment_details>
+# VSCode Visible Files
+src/ai_generator.py
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/validators.py,src/ai_generator.py,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:07:01.847Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$3.64
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+Now I need to fix the `estimated_complexity` field as well:
+
+<apply_diff>
+<path>src/ai_generator.py</path>
+<diff>
+<<<<<<< SEARCH
+:start_line:119
+-------
+    localized["estimated_complexity"] = "Media"
+=======
+    localized["estimated_complexity"] = "Medium"
+>>>>>>> REPLACE
+</diff>
+</apply_diff>
+
+---
+
+**User:**
+
+[apply_diff for 'src/ai_generator.py'] Result:
+<file_write_result>
+<path>src/ai_generator.py</path>
+<operation>modified</operation>
+<notice>
+<i>You do not need to re-read the file, as you have seen all changes</i>
+<i>Proceed with the task using these changes as the new baseline.</i>
+</notice>
+</file_write_result>
+
+<notice>Making multiple related changes in a single apply_diff is more efficient. If other changes are needed in this file, please include them as additional SEARCH/REPLACE blocks.</notice>
+<environment_details>
+# VSCode Visible Files
+src/ai_generator.py
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/validators.py,src/ai_generator.py,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:07:12.125Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$3.82
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+Now let me create a test to verify both English and Italian demo modes work correctly:
+
+<write_to_file>
+<path>tests/test_language_support.py</path>
+<content>
+"""Test language support for demo mode."""
+
+from src.ai_generator import generate_launch_plan
+from src.validators import validate_launch_plan
+
+
+def test_demo_mode_english():
+    """Test that demo mode works with English output."""
+    user_inputs = {
+        "business_idea": "Ethiopian coffee kiosk",
+        "business_type": "Coffee kiosk",
+        "cuisine": "Ethiopian",
+        "location": "Milan",
+        "budget": "5,000-10,000 EUR",
+        "target_customers": "Commuters",
+        "dietary_focus": ["Vegetarian-friendly"],
+        "launch_goal": "Test concept",
+        "output_language": "English",
+    }
+    
+    plan = generate_launch_plan(user_inputs, use_demo=True)
+    is_valid, message = validate_launch_plan(plan)
+    
+    assert is_valid is True, f"English demo plan validation failed: {message}"
+    assert plan["estimated_complexity"] in ["Low", "Medium", "High"]
+    assert len(plan["menu_items"]) >= 3
+    assert all(item["complexity"] in ["Low", "Medium", "High"] for item in plan["menu_items"])
+
+
+def test_demo_mode_italian():
+    """Test that demo mode works with Italian output."""
+    user_inputs = {
+        "business_idea": "Chiosco di caffè etiope",
+        "business_type": "Coffee kiosk",
+        "cuisine": "Etiope",
+        "location": "Milano",
+        "budget": "5.000-10.000 EUR",
+        "target_customers": "Pendolari",
+        "dietary_focus": ["Vegetariano"],
+        "launch_goal": "Testare il concetto",
+        "output_language": "Italian",
+    }
+    
+    plan = generate_launch_plan(user_inputs, use_demo=True)
+    is_valid, message = validate_launch_plan(plan)
+    
+    assert is_valid is True, f"Italian demo plan validation failed: {message}"
+    # Complexity values must remain in English for validation
+    assert plan["estimated_complexity"] in ["Low", "Medium", "High"]
+    assert len(plan["menu_items"]) >= 3
+    assert all(item["complexity"] in ["Low", "Medium", "High"] for item in plan["menu_items"])
+    # But user-facing text should be in Italian
+    assert "Caffè" in plan["menu_items"][0]["name"]
+    assert "Pendolari" in plan["best_customer_segment"]
+
+
+def test_all_required_sections_present():
+    """Test that all required sections are present in both languages."""
+    required_keys = [
+        "business_summary",
+        "positioning",
+        "launch_readiness_score",
+        "estimated_complexity",
+        "best_customer_segment",
+        "key_recommendation",
+        "main_risks",
+        "next_steps",
+        "menu_items",
+        "customer_personas",
+        "marketing",
+        "launch_checklist",
+    ]
+    
+    for language in ["English", "Italian"]:
+        user_inputs = {
+            "business_idea": "Test",
+            "business_type": "Coffee kiosk",
+            "cuisine": "Ethiopian",
+            "location": "Milan",
+            "budget": "5,000-10,000 EUR",
+            "target_customers": "Commuters",
+            "dietary_focus": [],
+            "launch_goal": "Test",
+            "output_language": language,
+        }
+        
+        plan = generate_launch_plan(user_inputs, use_demo=True)
+        
+        for key in required_keys:
+            assert key in plan, f"Missing key '{key}' in {language} output"
+        
+        # Check nested structures
+        assert "slogan" in plan["marketing"]
+        assert "instagram_bio" in plan["marketing"]
+        assert "captions" in plan["marketing"]
+        assert "launch_announcement" in plan["marketing"]
+        
+        assert "before_launch" in plan["launch_checklist"]
+        assert "menu_validation" in plan["launch_checklist"]
+        assert "marketing_setup" in plan["launch_checklist"]
+        assert "operations" in plan["launch_checklist"]
+        assert "first_week_testing" in plan["launch_checklist"]
+</content>
+<line_count>96</line_count>
+</write_to_file>
+
+---
+
+**User:**
+
+[write_to_file for 'tests/test_language_support.py'] Result:
+<file_write_result>
+<path>tests/test_language_support.py</path>
+<operation>created</operation>
+<notice>
+<i>You do not need to re-read the file, as you have seen all changes</i>
+<i>Proceed with the task using these changes as the new baseline.</i>
+</notice>
+</file_write_result>
+
+<environment_details>
+# VSCode Visible Files
+tests/test_language_support.py
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/validators.py,src/ai_generator.py,tests/test_language_support.py,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:07:33.359Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$4.00
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+<execute_command>
+<command>cd /home/letebrhan/Personal\ data/CV\ and\ projects/IBM\ Bob\ Hackathon/menunest-ai-copilot && python3 -m pytest tests/ -v</command>
+</execute_command>
+
+---
+
+**User:**
+
+[execute_command for 'cd /home/letebrhan/Personal\ data/CV\ and\ projects/IBM\ Bob\ Hackathon/menunest-ai-copilot && python3 -m pytest tests/ -v'] Result:
+Command executed in terminal  within working directory '/home/letebrhan/Personal data/CV and projects/IBM Bob Hackathon/menunest-ai-copilot'. Exit code: 0
+Output:
+============================= test session starts ==============================
+platform linux -- Python 3.12.3, pytest-9.0.1, pluggy-1.6.0 -- /usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/letebrhan/Personal data/CV and projects/IBM Bob Hackathon/menunest-ai-copilot
+plugins: asyncio-1.3.0, Faker-40.1.0, mock-3.15.1, xdist-3.8.0, anyio-4.2.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 8 items
+
+tests/test_export_utils.py::test_markdown_export_contains_core_sections PASSED [ 12%]
+tests/test_export_utils.py::test_json_export_is_valid_json PASSED        [ 25%]
+tests/test_language_support.py::test_demo_mode_english PASSED            [ 37%]
+tests/test_language_support.py::test_demo_mode_italian PASSED            [ 50%]
+tests/test_language_support.py::test_all_required_sections_present PASSED [ 62%]
+tests/test_prompt_builder.py::test_prompt_contains_user_inputs PASSED    [ 75%]
+tests/test_validators.py::test_sample_launch_plan_is_valid PASSED        [ 87%]
+tests/test_validators.py::test_launch_readiness_score_must_be_valid PASSED [100%]
+
+============================== 8 passed in 0.15s ===============================
+
+<environment_details>
+# VSCode Visible Files
+tests/test_language_support.py
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/validators.py,src/ai_generator.py,tests/test_language_support.py,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:07:41.052Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$4.19
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+Perfect! All tests pass. Now let me create a comprehensive bug fix summary document:
+
+<write_to_file>
+<path>docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md</path>
+<content>
+# Task 3 Bug Fix: Italian Language Validation Issue
+
+## Problem Description
+
+**Bug:** When users selected "Italian" as the output language and clicked "Generate Launch Plan", the app displayed a validation error:
+```
+Generation Error: The generated launch plan did not pass validation.
+```
+
+**Impact:** Italian language support was completely broken, preventing users from generating launch plans in Italian.
+
+## Root Cause Analysis
+
+The issue was in the `localize_demo_plan_to_italian()` function in `src/ai_generator.py`. The function was translating **internal schema values** that the validator expected to remain in English:
+
+### Problematic Code:
+```python
+# WRONG: Translating schema values
+"complexity": "Bassa",  # Should be "Low"
+"complexity": "Media",  # Should be "Medium"
+"estimated_complexity": "Media",  # Should be "Medium"
+```
+
+### Why This Failed:
+The Pydantic validator in `src/validators.py` has strict validation rules:
+
+```python
+@validator("complexity")
+def validate_complexity(cls, v: str) -> str:
+    """Ensure complexity is one of the allowed values."""
+    allowed = {"Low", "Medium", "High"}
+    if v not in allowed:
+        raise ValueError(f"Complexity must be one of {allowed}, got '{v}'")
+    return v
+```
+
+When the Italian version used "Bassa" or "Media", the validator rejected it because these values weren't in the allowed set `{"Low", "Medium", "High"}`.
+
+## Solution
+
+### Key Principle: Separate Schema Keys from User-Facing Text
+
+**Schema keys and constrained values must remain in English** for validation to work across all languages. Only **user-facing text content** should be translated.
+
+### What Should NOT Be Translated:
+- JSON object keys (`business_summary`, `menu_items`, etc.)
+- Constrained enum values (`complexity`: "Low" | "Medium" | "High")
+- Constrained enum values (`estimated_complexity`: "Low" | "Medium" | "High")
+- Any value that has validation rules
+
+### What SHOULD Be Translated:
+- User-facing text content (descriptions, names, recommendations)
+- Marketing copy (slogans, captions, bios)
+- Instructions and guidance text
+- Customer persona details
+- Checklist items
+
+## Changes Made
+
+### 1. Fixed `src/ai_generator.py`
+
+**Before (Broken):**
+```python
+{
+    "name": "Caffè Etiope (Buna)",
+    "complexity": "Bassa",  # ❌ WRONG - breaks validation
+    ...
+}
+```
+
+**After (Fixed):**
+```python
+{
+    "name": "Caffè Etiope (Buna)",
+    "complexity": "Low",  # ✅ CORRECT - passes validation
+    ...
+}
+```
+
+**Changes:**
+- Line 119: Changed `"Media"` to `"Medium"` for `estimated_complexity`
+- Lines 148, 160: Changed `"Bassa"` to `"Low"` for menu item complexity
+- Lines 172, 184, 196, 208: Changed `"Media"` to `"Medium"` for menu item complexity
+- Added comment explaining that complexity values must remain in English
+
+### 2. Created Comprehensive Tests
+
+Created `tests/test_language_support.py` with three test cases:
+
+1. **`test_demo_mode_english()`** - Verifies English demo mode works
+2. **`test_demo_mode_italian()`** - Verifies Italian demo mode works and validates correctly
+3. **`test_all_required_sections_present()`** - Ensures all required sections exist in both languages
+
+### Test Results:
+```
+tests/test_language_support.py::test_demo_mode_english PASSED
+tests/test_language_support.py::test_demo_mode_italian PASSED
+tests/test_language_support.py::test_all_required_sections_present PASSED
+```
+
+All 8 tests now pass (5 existing + 3 new).
+
+## Verification
+
+### English Output (Working):
+```json
+{
+  "estimated_complexity": "Medium",
+  "menu_items": [
+    {
+      "name": "Ethiopian Coffee (Buna)",
+      "complexity": "Low",
+      ...
+    }
+  ]
+}
+```
+
+### Italian Output (Now Working):
+```json
+{
+  "estimated_complexity": "Medium",  // ✅ English value for validation
+  "menu_items": [
+    {
+      "name": "Caffè Etiope (Buna)",  // ✅ Italian text for users
+      "complexity": "Low",  // ✅ English value for validation
+      "description": "Caffè ricco e aromatico...",  // ✅ Italian text
+      ...
+    }
+  ]
+}
+```
+
+## All Required Sections Verified
+
+Both English and Italian outputs now include all required sections:
+
+1. ✅ **Overview** - business_summary, positioning, launch_readiness_score, etc.
+2. ✅ **Menu & Pricing** - menu_items with all fields
+3. ✅ **Ingredients & Allergens** - ingredients and allergens arrays
+4. ✅ **Customers** - customer_personas array
+5. ✅ **Marketing** - marketing object with slogan, bio, captions, announcement
+6. ✅ **Launch Checklist** - launch_checklist with 5 categories
+7. ✅ **Export** - All data is exportable to JSON/Markdown
+
+## Security Verification
+
+- ✅ No API keys exposed in code or output
+- ✅ No secrets in validation error messages
+- ✅ App title remains "MenuNest: AI Copilot for Food Entrepreneurs"
+- ✅ All environment variables properly loaded from .env
+
+## Lessons Learned
+
+### Design Principle for Multilingual Apps:
+
+**Separate the data model from the presentation layer:**
+
+1. **Data Model (Schema)** - Use English for:
+   - JSON keys
+   - Enum values
+   - Validation constraints
+   - Internal identifiers
+
+2. **Presentation Layer (UI)** - Translate:
+   - User-facing text
+   - Descriptions
+   - Instructions
+   - Marketing copy
+
+This separation ensures:
+- Validation works consistently across languages
+- Code doesn't need language-specific logic
+- Adding new languages is straightforward
+- Database/API schemas remain stable
+
+### For Future LLM Integration:
+
+When integrating real AI models, the prompt should instruct:
+```
+IMPORTANT: Return complexity values in English ("Low", "Medium", "High") 
+even when generating content in other languages. Only translate user-facing 
+text fields like descriptions, names, and recommendations.
+```
+
+## Files Modified
+
+1. `src/ai_generator.py` - Fixed Italian localization to keep schema values in English
+2. `tests/test_language_support.py` - Added comprehensive language support tests
+
+## Conclusion
+
+**Bug Status:** ✅ FIXED
+
+The Italian language validation issue is now resolved. Users can successfully generate launch plans in both English and Italian. The fix maintains proper separation between schema validation (English) and user-facing content (translated), ensuring the app works reliably across languages.
+
+**Test Coverage:** 8/8 tests passing
+**Languages Supported:** English ✅ | Italian ✅
+**All Required Sections:** Present and validated ✅
+</content>
+<line_count>220</line_count>
+</write_to_file>
+
+---
+
+**User:**
+
+[write_to_file for 'docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md'] Result:
+<file_write_result>
+<path>docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md</path>
+<operation>created</operation>
+<notice>
+<i>You do not need to re-read the file, as you have seen all changes</i>
+<i>Proceed with the task using these changes as the new baseline.</i>
+</notice>
+</file_write_result>
+
+<environment_details>
+# VSCode Visible Files
+docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md
+
+# VSCode Open Tabs
+app.py,docs/UI_IMPROVEMENTS_SUMMARY.md,src/prompt_builder.py,src/sample_data.py,src/validators.py,src/ai_generator.py,tests/test_language_support.py,docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md,tests/test_export_utils.py,docs/TASK_03_AI_IMPROVEMENTS_SUMMARY.md,docs/CLEANUP_SUMMARY.md
+
+# Current Time
+Current time in ISO 8601 UTC format: 2026-05-16T02:08:19.250Z
+User time zone: Europe/Rome, UTC+2:00
+
+# Current Cost
+$4.38
+
+# Review Exclusions
+The following file patterns are excluded from code reviews:
+- .vscode/**
+
+# Current Mode
+<slug>code</slug>
+<name>💻 Code</name>
+====
+
+REMINDERS
+
+Below is your current list of reminders for this task. Keep them updated as you progress.
+
+| # | Content | Status |
+|---|---------|--------|
+| 1 | Review app.py to understand integration | Completed |
+| 2 | Improve prompt_builder.py for better AI generation guidance | Completed |
+| 3 | Enhance validators.py for robust JSON validation | Completed |
+| 4 | Improve sample_data.py with more realistic Ethiopian kiosk data | Completed |
+| 5 | Update ai_generator.py to handle language selection better | Completed |
+| 6 | Add safety checks for API key exposure | Completed |
+| 7 | Test and document all changes | Completed |
+
+
+IMPORTANT: When task status changes, remember to call the `update_todo_list` tool to update your progress.
+
+</environment_details>
+
+---
+
+**Assistant:**
+
+<attempt_completion>
+<result>
+**Task 3 Complete: Italian Language Bug Fixed**
+
+## Bug Fixed
+✅ Italian language validation error resolved - users can now generate launch plans in both English and Italian.
+
+## Root Cause
+The `localize_demo_plan_to_italian()` function was translating **schema constraint values** ("Low" → "Bassa", "Medium" → "Media") that the Pydantic validator expected to remain in English. This caused validation to fail because the validator only accepts `{"Low", "Medium", "High"}`.
+
+## Solution
+**Key Principle:** Separate schema keys from user-facing text.
+- ✅ Keep schema values in English: `complexity: "Low"`, `estimated_complexity: "Medium"`
+- ✅ Translate user-facing text: names, descriptions, marketing copy, instructions
+
+## Changes Made
+
+### 1. Fixed `src/ai_generator.py`
+- Changed `estimated_complexity` from "Media" to "Medium"
+- Changed all menu item `complexity` values from "Bassa"/"Media" to "Low"/"Medium"
+- Added comment explaining schema values must remain in English
+
+### 2. Created `tests/test_language_support.py`
+- `test_demo_mode_english()` - Verifies English works
+- `test_demo_mode_italian()` - Verifies Italian works and validates
+- `test_all_required_sections_present()` - Ensures all sections exist in both languages
+
+## Test Results
+```
+8/8 tests passing (5 existing + 3 new)
+✅ English demo mode works
+✅ Italian demo mode works
+✅ All required sections present in both languages
+```
+
+## All Required Sections Verified
+1. ✅ Overview (business_summary, positioning, readiness_score, etc.)
+2. ✅ Menu & Pricing (menu_items with all fields)
+3. ✅ Ingredients & Allergens (ingredients, allergens arrays)
+4. ✅ Customers (customer_personas)
+5. ✅ Marketing (slogan, bio, captions, announcement)
+6. ✅ Launch Checklist (5 categories with actionable items)
+7. ✅ Export (JSON/Markdown compatible)
+
+## Security
+- ✅ No API keys exposed
+- ✅ App title unchanged: "MenuNest: AI Copilot for Food Entrepreneurs"
+- ✅ Environment variables properly managed
+
+## Documentation
+- Created `docs/TASK_03_BUGFIX_ITALIAN_VALIDATION.md` with detailed analysis
+- Explains design principle for multilingual validation
+- Provides guidance for future LLM integration
+
+The Italian language support now works perfectly while maintaining robust validation across all languages.
+</result>
+</attempt_completion>
+
