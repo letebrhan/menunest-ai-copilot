@@ -379,15 +379,76 @@ def get_custom_css() -> str:
         border-left: 4px solid #ff9800;
     }
     
-    /* Sidebar markdown lists with better spacing */
+    /* Sidebar feature list container */
+    .sidebar-feature-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.6rem;
+        margin: 0.75rem 0;
+    }
+    
+    /* Individual feature item - clean card style */
+    .sidebar-feature-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+        background: white;
+        padding: 0.85rem;
+        border-radius: 0.5rem;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        border-left: 3px solid #ff9800;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-feature-item:hover {
+        transform: translateX(4px);
+        box-shadow: 0 3px 10px rgba(255, 152, 0, 0.15);
+        border-left-color: #ff6f00;
+    }
+    
+    /* Feature icon box */
+    .sidebar-feature-icon {
+        flex-shrink: 0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+        border-radius: 0.4rem;
+        font-size: 1.1rem;
+    }
+    
+    /*Feature content area */
+    .sidebar-feature-content {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Feature title - bold and compact */
+    .sidebar-feature-title {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #2d3748;
+        line-height: 1.3;
+        margin-bottom: 0.2rem;
+    }
+    
+    /* Feature description - subtle and compact */
+    .sidebar-feature-desc {
+        font-size: 0.8rem;
+        color: #666;
+        line-height: 1.4;
+        margin: 0;
+    }
+    
+    /* Legacy markdown lists - hidden for clean look */
     [data-testid="stSidebar"] ul {
-        padding-left: 1.2rem;
-        margin: 0.5rem 0;
+        display: none;
     }
     
     [data-testid="stSidebar"] li {
-        margin-bottom: 0.4rem;
-        line-height: 1.6;
+        display: none;
     }
     
     /* Sidebar dividers */

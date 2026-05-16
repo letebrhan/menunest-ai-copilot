@@ -62,24 +62,106 @@ with st.sidebar:
 
     st.markdown("### 🤖 How IBM Bob Helped")
     st.markdown("""
-    - ✅ Product workflow design
-    - ✅ Repository structure & cleanup
-    - ✅ Streamlit UI prototype
-    - ✅ Prompt engineering & schema design
-    - ✅ Code debugging & optimization
-    - ✅ Tests and documentation
-    """)
+    <div class='sidebar-feature-list'>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>🎯</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Product Workflow Design</div>
+                <div class='sidebar-feature-desc'>End-to-end planning and architecture</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>📁</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Repository Cleanup</div>
+                <div class='sidebar-feature-desc'>Structure and organization</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>🎨</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Streamlit UI Prototype</div>
+                <div class='sidebar-feature-desc'>Interactive interface design</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>⚙️</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Prompt Schema Design</div>
+                <div class='sidebar-feature-desc'>AI prompt engineering</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>🐛</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Debugging & Optimization</div>
+                <div class='sidebar-feature-desc'>Code quality improvements</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>📝</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Tests & Documentation</div>
+                <div class='sidebar-feature-desc'>Quality assurance and guides</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("### 📋 What MenuNest Generates")
     st.markdown("""
-    - 📊 **Business Overview** - Summary, positioning, and readiness score
-    - 🍽️ **Menu & Pricing** - Suggested items with price ranges
-    - 🥗 **Ingredients & Allergens** - Detailed preparation notes
-    - 👥 **Customer Personas** - Target segments and marketing angles
-    - 📱 **Marketing Content** - Social media copy and launch strategy
-    - ✅ **Launch Checklist** - Step-by-step action items
-    - 📥 **Export Options** - Download as Markdown or JSON
-    """)
+    <div class='sidebar-feature-list'>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>📊</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Overview</div>
+                <div class='sidebar-feature-desc'>Summary and readiness score</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>🍽️</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Menu & Pricing</div>
+                <div class='sidebar-feature-desc'>Items with price ranges</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>🥗</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Ingredients & Allergens</div>
+                <div class='sidebar-feature-desc'>Preparation notes</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>👥</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Customers</div>
+                <div class='sidebar-feature-desc'>Target personas</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>📱</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Marketing</div>
+                <div class='sidebar-feature-desc'>Social media content</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>✅</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Launch Checklist</div>
+                <div class='sidebar-feature-desc'>Action items</div>
+            </div>
+        </div>
+        <div class='sidebar-feature-item'>
+            <div class='sidebar-feature-icon'>📥</div>
+            <div class='sidebar-feature-content'>
+                <div class='sidebar-feature-title'>Export</div>
+                <div class='sidebar-feature-desc'>Markdown or JSON</div>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.markdown("### ⚙️ Demo Settings")
