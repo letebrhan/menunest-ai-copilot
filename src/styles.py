@@ -47,11 +47,18 @@ def get_custom_css() -> str:
         background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
     }
     
-    /* Main content area with fade-in animation */
+    /* Main content area with fade-in animation - reduced padding */
     .main .block-container {
         animation: fadeIn 0.6s ease-out;
         background-color: transparent;
-        padding: 2rem 1rem;
+        padding: 1.5rem 1rem 2rem 1rem;
+        max-width: 1400px;
+        margin: 0 auto;
+    }
+    
+    /* Reduce spacing after title */
+    .main h1 {
+        margin-bottom: 1rem !important;
     }
     
     /* ============================================
@@ -85,41 +92,155 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       HERO SECTION STYLING
+       HERO SECTION STYLING - PRODUCT DEMO LAYOUT
        ============================================ */
     
     .hero-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         padding: 2rem;
         border-radius: 1rem;
-        margin-bottom: 2rem;
+        margin-bottom: 1.5rem;
         box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
         animation: fadeIn 0.8s ease-out;
     }
     
-    .hero-section h3 {
+    /* Two-column hero layout */
+    .hero-content {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+        align-items: center;
+    }
+    
+    /* Left side - value proposition */
+    .hero-left {
+        color: white;
+    }
+    
+    .hero-headline {
+        font-size: clamp(1.6rem, 3.5vw, 2.2rem) !important;
+        font-weight: 700 !important;
         color: white !important;
-        margin-top: 0 !important;
+        margin: 0 0 1rem 0 !important;
+        line-height: 1.2 !important;
         text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
     }
     
-    .hero-section p {
+    .hero-description {
+        font-size: clamp(0.95rem, 1.8vw, 1.1rem) !important;
         color: rgba(255, 255, 255, 0.95) !important;
+        line-height: 1.6 !important;
+        margin: 0 0 1rem 0 !important;
         text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-cta {
+        font-size: clamp(0.9rem, 1.6vw, 1rem) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+        margin: 0 !important;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    
+    .hero-cta strong {
+        color: white;
+        font-weight: 600;
+    }
+    
+    /* Right side - feature card */
+    .hero-right {
+        display: flex;
+        justify-content: center;
+    }
+    
+    .hero-card {
+        background: white;
+        border-radius: 0.8rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        width: 100%;
+        max-width: 400px;
+    }
+    
+    .hero-card-title {
+        font-size: 1.1rem !important;
+        font-weight: 600 !important;
+        color: #2d3748 !important;
+        margin: 0 0 1rem 0 !important;
+        text-align: center;
+    }
+    
+    /* Feature badges */
+    .hero-badges {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .hero-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.65rem 0.85rem;
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.08) 0%, rgba(255, 152, 0, 0.04) 100%);
+        border-radius: 0.5rem;
+        border-left: 3px solid #ff9800;
+        transition: all 0.3s ease;
+    }
+    
+    .hero-badge:hover {
+        transform: translateX(4px);
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(255, 152, 0, 0.06) 100%);
+        box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+    }
+    
+    .hero-badge-icon {
+        font-size: 1.3rem;
+        flex-shrink: 0;
+    }
+    
+    .hero-badge-text {
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #2d3748;
+    }
+    
+    /* Mobile responsive hero */
+    @media (max-width: 768px) {
+        .hero-content {
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+        }
+        
+        .hero-section {
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero-card {
+            max-width: 100%;
+        }
+        
+        .hero-headline {
+            font-size: 1.5rem !important;
+        }
+        
+        .hero-description {
+            font-size: 0.95rem !important;
+        }
     }
     
     /* ============================================
        FORM SECTION STYLING
        ============================================ */
     
-    /* Form container background with stronger contrast */
+    /* Form container background with stronger contrast - reduced top margin */
     .stForm {
         background: white;
         padding: 2rem;
         border-radius: 1rem;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
         border: 2px solid rgba(255, 152, 0, 0.15);
-        margin: 1rem 0;
+        margin: 0.5rem 0 1rem 0;
     }
     
     /* Form section header with subtle orange accent */

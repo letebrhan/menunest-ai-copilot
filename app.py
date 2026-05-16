@@ -38,15 +38,45 @@ st.title("🍽️ MenuNest: AI Copilot for Food Entrepreneurs")
 st.markdown(
     """
     <div class='hero-section'>
-        <h3 style='margin-top: 0;'>Transform Your Food Business Idea Into a Launch Plan</h3>
-        <p style='font-size: 1.1rem; margin-bottom: 0.5rem;'>
-            MenuNest helps food entrepreneurs turn a rough concept into a practical first launch plan
-            with menu ideas, pricing guidance, customer personas, marketing content, and action checklists.
-        </p>
-        <p style='margin-bottom: 0;'>
-            <strong>Perfect for:</strong> founders who want to validate a food concept before spending
-            heavily on rent, equipment, inventory, or marketing.
-        </p>
+        <div class='hero-content'>
+            <div class='hero-left'>
+                <h2 class='hero-headline'>Turn Your Food Idea Into a Launch Plan</h2>
+                <p class='hero-description'>
+                    MenuNest helps food entrepreneurs test menus, pricing, customers, marketing,
+                    and launch steps before investing heavily in rent, equipment, or inventory.
+                </p>
+                <p class='hero-cta'>
+                    <strong>Start with your concept below</strong> and generate a practical first launch plan in minutes.
+                </p>
+            </div>
+            <div class='hero-right'>
+                <div class='hero-card'>
+                    <h3 class='hero-card-title'>Your Launch Plan Includes</h3>
+                    <div class='hero-badges'>
+                        <div class='hero-badge'>
+                            <span class='hero-badge-icon'>🍽️</span>
+                            <span class='hero-badge-text'>Menu Ideas</span>
+                        </div>
+                        <div class='hero-badge'>
+                            <span class='hero-badge-icon'>💰</span>
+                            <span class='hero-badge-text'>Pricing Guidance</span>
+                        </div>
+                        <div class='hero-badge'>
+                            <span class='hero-badge-icon'>👥</span>
+                            <span class='hero-badge-text'>Customer Personas</span>
+                        </div>
+                        <div class='hero-badge'>
+                            <span class='hero-badge-icon'>📱</span>
+                            <span class='hero-badge-text'>Marketing Content</span>
+                        </div>
+                        <div class='hero-badge'>
+                            <span class='hero-badge-icon'>✅</span>
+                            <span class='hero-badge-text'>Launch Checklist</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
     """,
     unsafe_allow_html=True,
