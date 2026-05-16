@@ -112,28 +112,31 @@ def get_custom_css() -> str:
        FORM SECTION STYLING
        ============================================ */
     
-    /* Form container background */
+    /* Form container background with stronger contrast */
     .stForm {
         background: white;
         padding: 2rem;
         border-radius: 1rem;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        border: 1px solid rgba(255, 152, 0, 0.1);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        border: 2px solid rgba(255, 152, 0, 0.15);
+        margin: 1rem 0;
     }
     
-    /* Form section header */
+    /* Form section header with subtle orange accent */
     .main h2 {
         color: #2d3748;
-        border-bottom: 3px solid #ff9800;
+        border-bottom: 3px solid rgba(255, 152, 0, 0.3);
         padding-bottom: 0.5rem;
         margin-bottom: 1rem;
     }
     
-    /* Form subheaders */
+    /* Form subheaders - reduced orange */
     .stForm h4 {
-        color: #ff9800;
+        color: #2d3748;
         font-weight: 600;
         margin-bottom: 1rem;
+        border-left: 3px solid #ff9800;
+        padding-left: 0.75rem;
     }
     
     /* ============================================
@@ -172,11 +175,11 @@ def get_custom_css() -> str:
         animation: none;
     }
     
-    /* Metric labels - responsive with warm color */
+    /* Metric labels - responsive with subtle orange */
     [data-testid="stMetric"] label {
         font-size: clamp(0.75rem, 1.2vw, 0.9rem) !important;
         font-weight: 600 !important;
-        color: #ff9800 !important;
+        color: #666 !important;
         white-space: normal !important;
         word-wrap: break-word !important;
         overflow-wrap: break-word !important;
@@ -338,6 +341,7 @@ def get_custom_css() -> str:
     
     [data-testid="stSidebar"] {
         background: linear-gradient(180deg, #faf8f3 0%, #f5f1e8 100%);
+        padding: 1rem;
     }
     
     [data-testid="stSidebar"] .stMarkdown {
@@ -345,10 +349,48 @@ def get_custom_css() -> str:
         color: #2d3748;
     }
     
+    /* Sidebar section headers with subtle orange accent */
     [data-testid="stSidebar"] h3 {
         color: #ff9800;
-        border-bottom: 2px solid #ff9800;
+        border-bottom: 2px solid rgba(255, 152, 0, 0.3);
         padding-bottom: 0.5rem;
+        margin-top: 1.5rem;
+        margin-bottom: 1rem;
+        font-size: 1.1rem;
+    }
+    
+    /* Sidebar info/success boxes */
+    [data-testid="stSidebar"] [data-testid="stAlert"] {
+        background-color: white;
+        border-radius: 0.6rem;
+        padding: 1rem;
+        margin: 0.5rem 0;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 3px solid #ff9800;
+    }
+    
+    /* Sidebar markdown lists */
+    [data-testid="stSidebar"] ul {
+        padding-left: 1.2rem;
+    }
+    
+    [data-testid="stSidebar"] li {
+        margin-bottom: 0.3rem;
+        line-height: 1.5;
+    }
+    
+    /* Sidebar dividers */
+    [data-testid="stSidebar"] hr {
+        border-color: rgba(255, 152, 0, 0.2);
+        margin: 1.5rem 0;
+    }
+    
+    /* Sidebar toggle/checkbox */
+    [data-testid="stSidebar"] .stCheckbox {
+        background-color: white;
+        padding: 0.5rem;
+        border-radius: 0.4rem;
+        margin: 0.5rem 0;
     }
     
     /* ============================================
@@ -429,6 +471,20 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
+       STREAMLIT TOOLBAR HIDING
+       ============================================ */
+    
+    /* Hide Streamlit toolbar for cleaner demo */
+    header[data-testid="stHeader"] {
+        background-color: transparent;
+    }
+    
+    /* Minimize toolbar visibility */
+    .stDeployButton {
+        visibility: hidden;
+    }
+    
+    /* ============================================
        MOBILE RESPONSIVENESS
        ============================================ */
     
@@ -458,6 +514,11 @@ def get_custom_css() -> str:
         /* Adjust form columns */
         [data-testid="stHorizontalBlock"] {
             flex-direction: column;
+        }
+        
+        /* Sidebar adjustments */
+        [data-testid="stSidebar"] {
+            padding: 0.5rem;
         }
     }
     
