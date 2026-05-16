@@ -905,9 +905,9 @@ def _generate_marketing_content(cuisine: str, location: str, business_type: str)
             f"📍 {location} | DM for reservations & catering"
         ),
         "captions": [
-            f"Bringing authentic {cuisine} flavors to {location}. Who's ready to taste tradition? 🍽️✨ #{cuisine_hashtag} #{location_hashtag}Food",
+            f"Bringing authentic {cuisine} flavors to {location}. Who's ready to taste tradition? 🍽️✨ #{cuisine_hashtag} #{location_hashtag} Food",
             f"Every dish tells a story. Come experience {cuisine} the way it's meant to be. 🌟 #Authentic{cuisine_hashtag} #FoodLovers",
-            f"Fresh ingredients, traditional recipes, unforgettable flavors. This is {cuisine} in {location}. 🔥 #{location_hashtag}Eats #{cuisine_hashtag}Cuisine",
+            f"Fresh ingredients, traditional recipes, unforgettable flavors. This is {cuisine} in {location}. 🔥 #{location_hashtag} Eats #{cuisine_hashtag} Cuisine",
         ],
         "launch_announcement": (
             f"Launch strategy: Start with a soft opening to test operations and gather feedback. "

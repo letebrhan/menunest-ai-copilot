@@ -109,7 +109,7 @@ def get_custom_css() -> str:
     
     .hero-section {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
+        padding: 1.5rem 2rem;
         border-radius: 1rem;
         margin-bottom: 1.5rem;
         box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
@@ -167,7 +167,7 @@ def get_custom_css() -> str:
     .hero-card {
         background: white;
         border-radius: 0.8rem;
-        padding: 1.5rem;
+        padding: 1.25rem;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
         width: 100%;
         max-width: 400px;
@@ -803,7 +803,22 @@ def get_custom_css() -> str:
     .stSelectbox,
     .stMultiSelect {
         margin-bottom: 1.5rem !important;
-        padding-bottom: 0.25rem !important;
+    }
+    
+    /* Ensure all input wrappers have consistent width */
+    .stTextInput > div,
+    .stTextArea > div,
+    .stSelectbox > div,
+    .stMultiSelect > div {
+        width: 100% !important;
+    }
+    
+    /* Ensure all inner input containers are full width */
+    .stTextInput > div > div,
+    .stTextArea > div > div,
+    .stSelectbox > div > div,
+    .stMultiSelect > div > div {
+        width: 100% !important;
     }
     
     /* Ensure last field in each column has adequate bottom space */
@@ -814,16 +829,18 @@ def get_custom_css() -> str:
         margin-bottom: 2rem !important;
     }
     
-    /* Form columns should have consistent width and alignment */
-    [data-testid="column"] {
-        padding: 0 0.5rem !important;
+    /* Form columns should have equal padding for alignment */
+    .stForm [data-testid="column"] {
+        padding: 0 0.75rem !important;
     }
     
-    [data-testid="column"]:first-child {
+    .stForm [data-testid="column"]:first-child {
         padding-left: 0 !important;
+        padding-right: 0.75rem !important;
     }
     
-    [data-testid="column"]:last-child {
+    .stForm [data-testid="column"]:last-child {
+        padding-left: 0.75rem !important;
         padding-right: 0 !important;
     }
     
