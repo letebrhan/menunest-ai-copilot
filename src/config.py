@@ -35,6 +35,20 @@ DIETARY_OPTIONS = [
     "No specific focus",
 ]
 
+CUISINE_OPTIONS = [
+    "Ethiopian / East African",
+    "Italian",
+    "Mediterranean",
+    "Middle Eastern",
+    "Mexican",
+    "Indian",
+    "Asian Fusion",
+    "Vegan / Plant-based",
+    "Bakery / Pastry",
+    "Coffee / Breakfast",
+    "Other / Custom",
+]
+
 OUTPUT_LANGUAGES = ["English", "Italian"]
 
 DEFAULT_INPUTS = {

@@ -16,7 +16,7 @@ from typing import Any
 from dotenv import load_dotenv
 
 from src.prompt_builder import build_launch_plan_prompt
-from src.sample_data import SAMPLE_LAUNCH_PLAN
+from src.sample_data import SAMPLE_LAUNCH_PLAN, generate_dynamic_demo_plan
 from src.validators import coerce_launch_plan, safe_parse_json
 
 # Load environment variables from .env file
@@ -50,9 +50,11 @@ def generate_launch_plan(
     provider = os.getenv("LLM_PROVIDER", "demo").lower().strip()
     output_language = user_inputs.get("output_language", "English")
 
-    # Demo mode: Use pre-validated sample data
+    # Demo mode: Generate dynamic demo data based on user inputs
     if use_demo or provider == "demo":
-        plan = coerce_launch_plan(SAMPLE_LAUNCH_PLAN)
+        # Generate plan adapted to user inputs
+        plan = generate_dynamic_demo_plan(user_inputs)
+        plan = coerce_launch_plan(plan)
         
         # Apply language localization if requested
         if output_language == "Italian":

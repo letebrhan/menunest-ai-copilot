@@ -12,6 +12,7 @@ from src.config import (
     APP_TITLE,
     BUDGET_RANGES,
     BUSINESS_TYPES,
+    CUISINE_OPTIONS,
     DEFAULT_INPUTS,
     DIETARY_OPTIONS,
     OUTPUT_LANGUAGES,
@@ -123,11 +124,25 @@ with st.form("business_form"):
             index=BUSINESS_TYPES.index(DEFAULT_INPUTS["business_type"]),
             help="Select the format that best matches your concept",
         )
-        cuisine = st.text_input(
+        cuisine_selection = st.selectbox(
             "Cuisine Type",
-            value=DEFAULT_INPUTS["cuisine"],
-            help="e.g., Italian, Ethiopian, Fusion, etc.",
+            CUISINE_OPTIONS,
+            index=CUISINE_OPTIONS.index(DEFAULT_INPUTS["cuisine"]),
+            help="Select your cuisine type or choose 'Other / Custom' to specify your own",
         )
+        
+        # Show custom input field if "Other / Custom" is selected
+        if cuisine_selection == "Other / Custom":
+            cuisine = st.text_input(
+                "Custom Cuisine Type",
+                value="",
+                placeholder="e.g., Korean BBQ, French Bistro, etc.",
+                help="Specify your custom cuisine type",
+            )
+            if not cuisine or not cuisine.strip():
+                cuisine = "Other / Custom"
+        else:
+            cuisine = cuisine_selection
         location = st.text_input(
             "Location",
             value=DEFAULT_INPUTS["location"],
