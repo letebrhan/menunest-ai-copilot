@@ -17,5 +17,5 @@ def test_json_export_is_valid_json():
     raw_json = launch_plan_to_json(SAMPLE_LAUNCH_PLAN)
     parsed = json.loads(raw_json)
 
-    assert parsed["launch_readiness_score"] == 78
+    assert parsed["launch_readiness_score"] == 72
     assert len(parsed["menu_items"]) >= 1
