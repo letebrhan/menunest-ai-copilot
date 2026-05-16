@@ -375,57 +375,111 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       TABS STYLING & ANIMATION
+       TABS STYLING & ANIMATION - Modern Pill Style
        ============================================ */
     
-    /* Tab container with warm background */
+    /* Tab container with warm background and better spacing */
     .stTabs {
         background-color: white;
-        border-radius: 0.8rem;
-        padding: 1.5rem;
-        margin-top: 1rem;
+        border-radius: 1rem;
+        padding: 2rem 1.5rem;
+        margin-top: 1.5rem;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
         border: 1px solid rgba(255, 152, 0, 0.1);
     }
     
-    /* Tab buttons */
+    /* Tab list - modern pill container */
     .stTabs [data-baseweb="tab-list"] {
-        gap: 0.5rem;
-        background-color: #faf8f3;
-        border-radius: 0.6rem;
-        padding: 0.5rem;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        gap: 0.75rem;
+        background: linear-gradient(135deg, #fff9f5 0%, #fef6f0 100%);
+        border-radius: 1rem;
+        padding: 0.75rem;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.04);
+        border: 1px solid #f5e6d3;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        justify-content: flex-start;
     }
     
+    /* Individual tab buttons - pill style */
     .stTabs [data-baseweb="tab"] {
-        font-size: clamp(0.85rem, 1.4vw, 1rem) !important;
-        font-weight: 500;
-        padding: 0.6rem 1rem;
-        border-radius: 0.4rem;
-        transition: all 0.3s ease;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        color: #666;
+        font-size: clamp(0.85rem, 1.4vw, 0.95rem) !important;
+        font-weight: 600 !important;
+        padding: 0.75rem 1.25rem !important;
+        border-radius: 2rem !important;
+        transition: all 0.3s ease !important;
+        white-space: nowrap !important;
+        border: 2px solid transparent !important;
+        background-color: transparent !important;
+        color: #666 !important;
+        min-height: 42px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     
+    /* Inactive tab hover state */
     .stTabs [data-baseweb="tab"]:hover {
-        background-color: rgba(255, 152, 0, 0.1);
-        transform: translateY(-2px);
-        color: #ff9800;
+        background: linear-gradient(135deg, #fff5eb 0%, #ffe8d6 100%) !important;
+        color: #ff9800 !important;
+        border-color: rgba(255, 152, 0, 0.2) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15) !important;
     }
     
+    /* Active/selected tab - warm orange gradient */
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #ff9800 0%, #ff6f00 100%) !important;
         color: white !important;
-        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3);
+        border-color: #ff6f00 !important;
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.3) !important;
+        font-weight: 700 !important;
     }
     
-    /* Tab content with animation */
+    /* Active tab hover - slightly enhanced */
+    .stTabs [aria-selected="true"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 16px rgba(255, 152, 0, 0.4) !important;
+    }
+    
+    /* Tab content with animation and better spacing */
     .stTabs [data-baseweb="tab-panel"] {
         animation: slideIn 0.4s ease-out;
-        padding-top: 1.5rem;
-        background-color: white;
+        padding-top: 0.5rem;
+        background-color: transparent;
+    }
+    
+    /* Mobile responsive tabs */
+    @media (max-width: 768px) {
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 0.5rem;
+            padding: 0.5rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: #ff9800 #f5f1e8;
+        }
+        
+        .stTabs [data-baseweb="tab-list"]::-webkit-scrollbar {
+            height: 6px;
+        }
+        
+        .stTabs [data-baseweb="tab-list"]::-webkit-scrollbar-track {
+            background: #f5f1e8;
+            border-radius: 3px;
+        }
+        
+        .stTabs [data-baseweb="tab-list"]::-webkit-scrollbar-thumb {
+            background: #ff9800;
+            border-radius: 3px;
+        }
+        
+        .stTabs [data-baseweb="tab"] {
+            font-size: 0.85rem !important;
+            padding: 0.6rem 1rem !important;
+            min-width: fit-content !important;
+        }
     }
     
     /* ============================================
