@@ -336,20 +336,29 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       SIDEBAR STYLING
+       SIDEBAR STYLING - DIFFERENTIATED BACKGROUND
        ============================================ */
     
+    /* Sidebar with distinct warm beige background */
     [data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #faf8f3 0%, #f5f1e8 100%);
-        padding: 1rem;
+        background: linear-gradient(180deg, #f5f0e8 0%, #ede7dc 100%);
+        padding: 1.5rem 1rem;
+        border-right: 1px solid rgba(255, 152, 0, 0.15);
     }
     
+    /* Sidebar content wrapper */
+    [data-testid="stSidebar"] > div {
+        background-color: transparent;
+    }
+    
+    /* Sidebar text styling */
     [data-testid="stSidebar"] .stMarkdown {
         font-size: 0.95rem;
         color: #2d3748;
+        line-height: 1.6;
     }
     
-    /* Sidebar section headers with subtle orange accent */
+    /* Sidebar section headers with orange accent */
     [data-testid="stSidebar"] h3 {
         color: #ff9800;
         border-bottom: 2px solid rgba(255, 152, 0, 0.3);
@@ -357,26 +366,28 @@ def get_custom_css() -> str:
         margin-top: 1.5rem;
         margin-bottom: 1rem;
         font-size: 1.1rem;
+        font-weight: 600;
     }
     
-    /* Sidebar info/success boxes */
+    /* Sidebar info/success boxes with card styling */
     [data-testid="stSidebar"] [data-testid="stAlert"] {
         background-color: white;
         border-radius: 0.6rem;
-        padding: 1rem;
-        margin: 0.5rem 0;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-        border-left: 3px solid #ff9800;
+        padding: 1.2rem;
+        margin: 0.75rem 0;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        border-left: 4px solid #ff9800;
     }
     
-    /* Sidebar markdown lists */
+    /* Sidebar markdown lists with better spacing */
     [data-testid="stSidebar"] ul {
         padding-left: 1.2rem;
+        margin: 0.5rem 0;
     }
     
     [data-testid="stSidebar"] li {
-        margin-bottom: 0.3rem;
-        line-height: 1.5;
+        margin-bottom: 0.4rem;
+        line-height: 1.6;
     }
     
     /* Sidebar dividers */
@@ -385,12 +396,20 @@ def get_custom_css() -> str:
         margin: 1.5rem 0;
     }
     
-    /* Sidebar toggle/checkbox */
+    /* Sidebar toggle/checkbox with card styling */
     [data-testid="stSidebar"] .stCheckbox {
         background-color: white;
-        padding: 0.5rem;
-        border-radius: 0.4rem;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
         margin: 0.5rem 0;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+    }
+    
+    /* Sidebar captions */
+    [data-testid="stSidebar"] .stCaption {
+        color: #666;
+        font-size: 0.85rem;
+        line-height: 1.5;
     }
     
     /* ============================================
@@ -443,31 +462,118 @@ def get_custom_css() -> str:
     }
     
     /* ============================================
-       INPUT FIELDS & FORMS
+       INPUT FIELDS & FORMS - ENHANCED CLARITY
        ============================================ */
     
-    /* Text inputs */
-    .stTextInput > div > div > input,
-    .stTextArea > div > div > textarea,
+    /* Text input fields with clear boundaries */
+    .stTextInput > div > div > input {
+        border: 2px solid rgba(255, 152, 0, 0.25) !important;
+        border-radius: 0.5rem !important;
+        padding: 0.75rem 1rem !important;
+        background-color: white !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .stTextInput > div > div > input:hover {
+        border-color: rgba(255, 152, 0, 0.4) !important;
+        box-shadow: 0 2px 6px rgba(255, 152, 0, 0.1) !important;
+    }
+    
+    .stTextInput > div > div > input:focus {
+        border-color: #ff9800 !important;
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15) !important;
+        outline: none !important;
+    }
+    
+    /* Text area fields with adequate height and padding */
+    .stTextArea > div > div > textarea {
+        border: 2px solid rgba(255, 152, 0, 0.25) !important;
+        border-radius: 0.5rem !important;
+        padding: 0.75rem 1rem !important;
+        background-color: white !important;
+        font-size: 1rem !important;
+        min-height: 120px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        resize: vertical !important;
+    }
+    
+    .stTextArea > div > div > textarea:hover {
+        border-color: rgba(255, 152, 0, 0.4) !important;
+        box-shadow: 0 2px 6px rgba(255, 152, 0, 0.1) !important;
+    }
+    
+    .stTextArea > div > div > textarea:focus {
+        border-color: #ff9800 !important;
+        box-shadow: 0 0 0 3px rgba(255, 152, 0, 0.15) !important;
+        outline: none !important;
+    }
+    
+    /* Select/dropdown fields with clickable appearance */
+    .stSelectbox > div > div {
+        border: 2px solid rgba(255, 152, 0, 0.25) !important;
+        border-radius: 0.5rem !important;
+        background-color: white !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    
+    .stSelectbox > div > div:hover {
+        border-color: rgba(255, 152, 0, 0.4) !important;
+        box-shadow: 0 2px 6px rgba(255, 152, 0, 0.1) !important;
+        cursor: pointer !important;
+    }
+    
     .stSelectbox > div > div > div {
-        border-color: rgba(255, 152, 0, 0.2);
-        border-radius: 0.5rem;
+        padding: 0.75rem 1rem !important;
+        font-size: 1rem !important;
     }
     
-    .stTextInput > div > div > input:focus,
-    .stTextArea > div > div > textarea:focus,
-    .stSelectbox > div > div > div:focus {
-        border-color: #ff9800;
-        box-shadow: 0 0 0 2px rgba(255, 152, 0, 0.1);
+    /* Multi-select fields */
+    .stMultiSelect > div > div {
+        border: 2px solid rgba(255, 152, 0, 0.25) !important;
+        border-radius: 0.5rem !important;
+        background-color: white !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        min-height: 120px !important;
     }
     
-    /* Form labels */
+    .stMultiSelect > div > div:hover {
+        border-color: rgba(255, 152, 0, 0.4) !important;
+        box-shadow: 0 2px 6px rgba(255, 152, 0, 0.1) !important;
+    }
+    
+    /* Form labels with better spacing and visibility */
     .stTextInput > label,
     .stTextArea > label,
     .stSelectbox > label,
     .stMultiSelect > label {
-        color: #2d3748;
-        font-weight: 600;
+        color: #2d3748 !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        margin-bottom: 0.5rem !important;
+        display: block !important;
+    }
+    
+    /* Form field containers with better spacing */
+    .stTextInput,
+    .stTextArea,
+    .stSelectbox,
+    .stMultiSelect {
+        margin-bottom: 1.25rem !important;
+    }
+    
+    /* Help text / captions under form fields */
+    .stTextInput + div,
+    .stTextArea + div,
+    .stSelectbox + div,
+    .stMultiSelect + div {
+        color: #666 !important;
+        font-size: 0.85rem !important;
+        margin-top: 0.25rem !important;
     }
     
     /* ============================================
