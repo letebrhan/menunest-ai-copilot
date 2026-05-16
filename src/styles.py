@@ -42,6 +42,18 @@ def get_custom_css() -> str:
         }
     }
     
+    /* Fade-up animation for hero badges */
+    @keyframes fadeUp {
+        from {
+            opacity: 0;
+            transform: translateY(15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
     /* Overall page background - warm cream color */
     .stApp {
         background: linear-gradient(135deg, #faf8f3 0%, #f5f1e8 100%);
@@ -185,12 +197,21 @@ def get_custom_css() -> str:
         border-radius: 0.5rem;
         border-left: 3px solid #ff9800;
         transition: all 0.3s ease;
+        opacity: 0;
+        animation: fadeUp 0.6s ease-out forwards;
     }
     
+    /* Staggered animation delays for each badge */
+    .hero-badge:nth-child(1) { animation-delay: 0.1s; }
+    .hero-badge:nth-child(2) { animation-delay: 0.2s; }
+    .hero-badge:nth-child(3) { animation-delay: 0.3s; }
+    .hero-badge:nth-child(4) { animation-delay: 0.4s; }
+    .hero-badge:nth-child(5) { animation-delay: 0.5s; }
+    
     .hero-badge:hover {
-        transform: translateX(4px);
+        transform: translateX(4px) translateY(-2px);
         background: linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(255, 152, 0, 0.06) 100%);
-        box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+        box-shadow: 0 4px 12px rgba(255, 152, 0, 0.2);
     }
     
     .hero-badge-icon {

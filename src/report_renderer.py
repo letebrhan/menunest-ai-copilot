@@ -88,7 +88,7 @@ def render_tabs(plan: dict) -> None:
             "🥗 Ingredients & Allergens",
             "👥 Customers",
             "📱 Marketing",
-            "✅ Launch Checklist",
+            "📋 Launch Checklist",
             "📥 Export",
         ]
     )
@@ -221,7 +221,7 @@ def render_tabs(plan: dict) -> None:
 
     # Tab 5: Launch Checklist
     with tabs[5]:
-        st.subheader("✅ Launch Checklist")
+        st.subheader("📋 Launch Checklist")
         st.caption("Step-by-step action items to prepare for your launch")
         
         checklist = plan["launch_checklist"]

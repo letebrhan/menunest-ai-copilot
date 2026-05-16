@@ -70,7 +70,7 @@ st.markdown(
                             <span class='hero-badge-text'>Marketing Content</span>
                         </div>
                         <div class='hero-badge'>
-                            <span class='hero-badge-icon'>✅</span>
+                            <span class='hero-badge-icon'>📋</span>
                             <span class='hero-badge-text'>Launch Checklist</span>
                         </div>
                     </div>
@@ -177,7 +177,7 @@ with st.sidebar:
             </div>
         </div>
         <div class='sidebar-feature-item'>
-            <div class='sidebar-feature-icon'>✅</div>
+            <div class='sidebar-feature-icon'>📋</div>
             <div class='sidebar-feature-content'>
                 <div class='sidebar-feature-title'>Launch Checklist</div>
                 <div class='sidebar-feature-desc'>Action items</div>
@@ -197,7 +197,7 @@ with st.sidebar:
     st.markdown("### ⚙️ Demo Settings")
     use_demo = st.toggle("🔒 Use Stable Demo Mode", value=True)
     st.caption(
-        "✅ **Recommended for live judging**\n\n"
+        "**✓ Recommended for live judging**\n\n"
         "Demo mode uses pre-validated sample data, ensuring reliable results "
         "without requiring external API keys or network access."
     )
@@ -339,7 +339,7 @@ if submitted:
             "💰 Estimating pricing ranges...",
             "👥 Creating customer personas...",
             "📱 Preparing marketing content...",
-            "✅ Generating launch checklist...",
+            "📋 Generating launch checklist...",
         ]
 
         progress_bar = st.progress(0)
@@ -370,7 +370,7 @@ if submitted:
                 
                 # Show success message
                 st.success(
-                    "✅ **Launch Plan Generated Successfully!**\n\n"
+                    "**✓ Launch Plan Generated Successfully!**\n\n"
                     f"Your personalized plan is ready. Scroll down to explore the results."
                 )
                 
@@ -406,7 +406,7 @@ else:
         4. **🥗 Ingredients & Allergens** - Detailed preparation notes
         5. **👥 Customer Personas** - Target segments and marketing angles
         6. **📱 Marketing Content** - Ready-to-use social media copy
-        7. **✅ Launch Checklist** - Step-by-step action items
+        7. **📋 Launch Checklist** - Step-by-step action items
         8. **📥 Export Options** - Download as Markdown or JSON
         
         All content is tailored to your specific business concept, location, and budget.
