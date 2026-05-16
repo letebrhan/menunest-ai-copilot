@@ -228,6 +228,75 @@ with st.form("business_form"):
 
     with col1:
         st.markdown("#### 🎯 Core Concept")
+        
+        # Animated demo overlay for Business Idea field
+        st.markdown("""
+        <div id="business-idea-demo-overlay" class="business-idea-demo-overlay">
+            <div class="demo-label">Business Idea</div>
+            <div class="demo-text-container">
+                <span id="typewriter-text" class="typewriter-text"></span>
+                <span class="typewriter-cursor">|</span>
+            </div>
+            <div class="demo-hint">👆 Click to start typing your own idea</div>
+        </div>
+        <script>
+        (function() {
+            const text = "I want to launch an Ethiopian coffee and breakfast kiosk in Milan.";
+            const typewriterElement = document.getElementById('typewriter-text');
+            const overlayElement = document.getElementById('business-idea-demo-overlay');
+            let index = 0;
+            let typingInterval;
+            
+            function typeWriter() {
+                if (index < text.length && overlayElement) {
+                    typewriterElement.textContent += text.charAt(index);
+                    index++;
+                    typingInterval = setTimeout(typeWriter, 50); // 50ms per character
+                } else {
+                    // Remove cursor after typing completes
+                    setTimeout(() => {
+                        const cursor = overlayElement?.querySelector('.typewriter-cursor');
+                        if (cursor) cursor.style.display = 'none';
+                    }, 500);
+                }
+            }
+            
+            // Start typing after a short delay
+            setTimeout(typeWriter, 800);
+            
+            // Remove overlay on any form interaction
+            function removeOverlay() {
+                if (overlayElement) {
+                    overlayElement.style.opacity = '0';
+                    setTimeout(() => {
+                        if (overlayElement.parentNode) {
+                            overlayElement.parentNode.removeChild(overlayElement);
+                        }
+                    }, 300);
+                }
+                clearTimeout(typingInterval);
+            }
+            
+            // Listen for clicks anywhere in the form
+            const form = document.querySelector('[data-testid="stForm"]');
+            if (form) {
+                form.addEventListener('click', removeOverlay, { once: true });
+            }
+            
+            // Also remove on any input focus
+            setTimeout(() => {
+                const inputs = document.querySelectorAll('textarea, input, select');
+                inputs.forEach(input => {
+                    input.addEventListener('focus', removeOverlay, { once: true });
+                });
+            }, 100);
+            
+            // Auto-remove after animation completes (fallback)
+            setTimeout(removeOverlay, 8000);
+        })();
+        </script>
+        """, unsafe_allow_html=True)
+        
         business_idea = st.text_area(
             "Business Idea",
             value=DEFAULT_INPUTS["business_idea"],
