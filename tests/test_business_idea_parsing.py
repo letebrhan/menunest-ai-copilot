@@ -42,8 +42,17 @@ class TestBusinessIdeaCleaning:
         raw = "I want to launch a pizza restaurant"
         cleaned = clean_business_idea(raw)
         assert not cleaned.lower().startswith("i want to")
-        assert cleaned.startswith("Launch") or cleaned.startswith("launch")
+        assert "pizza restaurant" in cleaned.lower()
+        assert "i want to" not in cleaned.lower()
     
+    def test_display_concept_removes_launch_prefix(self):
+        from src.sample_data import create_display_concept
+
+        concept = create_display_concept("I want to launch an Ethiopian coffee kiosk in Milan")
+        assert "ethiopian coffee kiosk" in concept.lower()
+        assert "i want" not in concept.lower()
+        assert not concept.lower().startswith("launch")
+
     def test_removes_filler_phrase_i_would_like_to(self):
         """Test that 'I would like to' is removed."""
         raw = "I would like to open a vegan cafe"

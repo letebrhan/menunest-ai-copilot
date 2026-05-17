@@ -442,9 +442,9 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     
     # Build professional summary using the display concept
     business_summary = (
-        f"A {display_concept} targeting {target_customers if target_customers else 'local customers'} "
-        f"in {location}. This {business_type.lower()} focuses on delivering a curated menu "
-        f"that balances quality, speed, and profitability{dietary_text}."
+        f"This {display_concept} targets {target_customers if target_customers else 'local customers'} "
+        f"in {location}. The plan focuses on a curated menu that balances quality, "
+        f"speed, and profitability{dietary_text}."
     )
     
     # Build positioning that reflects the BUSINESS IDEA, not just cuisine templates
@@ -510,8 +510,7 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Build key recommendation that addresses the SPECIFIC business idea
     # Consider the business idea's unique challenges and opportunities
     concept_snippet = extract_concept_snippet(business_idea, max_words=10)
-    key_recommendation = f"For your {concept_snippet}: "
-    
+    key_recommendation = f"For this {display_concept}: "
     # Tailor recommendation based on budget AND business idea complexity
     if "under 5,000" in budget.lower():
         key_recommendation += (
@@ -546,7 +545,7 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Risk 1: Market awareness (tailored to the specific concept)
     if "new" in idea_lower or "innovative" in idea_lower or "unique" in idea_lower:
         main_risks.append(
-            f"As a new concept ({business_idea.strip()}), customer education and marketing will be critical to build awareness in {location_city}"
+            f"As a new concept, this {display_concept} will need clear customer education and marketing to build awareness in {location_city}"
         )
     else:
         main_risks.append(
@@ -586,7 +585,7 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Generate next steps that are ACTIONABLE and SPECIFIC to the business idea
     concept_snippet = extract_concept_snippet(business_idea, max_words=10)
     next_steps = [
-        f"Conduct market research with 30-50 potential customers in {location_city} to validate the appeal of your concept ({concept_snippet})",
+        f"Conduct market research with 30-50 potential customers in {location_city} to validate demand for this {display_concept}",
         f"Source ingredients needed for your {cuisine} menu and calculate exact cost per portion for each item",
         f"Create social media presence with 10-15 posts showcasing what makes your concept unique before launch",
         f"Develop and test operational workflows for 3-5 days to ensure you can deliver on your concept efficiently",
