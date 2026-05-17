@@ -268,6 +268,10 @@ def clean_business_idea(business_idea: str) -> str:
         r'^the\s+idea\s+is\s+to\s+',
         r'^i\s+am\s+thinking\s+(of|about)\s+',
         r'^i\s+am\s+considering\s+',
+        r'^launch\s+an?\s+',  # Remove "Launch a" or "Launch an"
+        r'^start\s+an?\s+',   # Remove "Start a" or "Start an"
+        r'^open\s+an?\s+',    # Remove "Open a" or "Open an"
+        r'^create\s+an?\s+',  # Remove "Create a" or "Create an"
     ]
     for phrase in filler_phrases:
         cleaned = re.sub(phrase, '', cleaned, flags=re.IGNORECASE)
@@ -332,6 +336,53 @@ def extract_concept_snippet(business_idea: str, max_words: int = 8) -> str:
     return snippet.rstrip('.') + '...'
 
 
+def create_display_concept(business_idea: str) -> str:
+    """Create a natural display concept from the business idea.
+    
+    This function converts raw business ideas into professional display text
+    suitable for use in sentences like "For your [display concept]:" or
+    "This [display concept] targets..."
+    
+    Examples:
+        "I want to launch an Ethiopian coffee kiosk" → "Ethiopian coffee kiosk"
+        "Launch a vegan bakery in Rome" → "vegan bakery in Rome"
+        "Open an Italian restaurant" → "Italian restaurant"
+    
+    Args:
+        business_idea: Raw or cleaned business idea text
+        
+    Returns:
+        Natural display concept without awkward prefixes
+    """
+    if not business_idea:
+        return "concept"
+    
+    # Clean the idea first (removes "I want to", "Launch a", etc.)
+    cleaned = clean_business_idea(business_idea)
+    
+    # Remove trailing period for use in sentences
+    display = cleaned.rstrip('.')
+    
+    # Ensure it starts with lowercase unless it's a proper noun
+    # Check if first word looks like a proper noun (capitalized and not at sentence start)
+    words = display.split()
+    if words and len(words) > 1:
+        # If first word is capitalized but second word isn't, it might be a proper noun
+        # Keep it capitalized. Otherwise, lowercase it for natural flow.
+        if words[0][0].isupper() and (len(words) < 2 or not words[1][0].isupper()):
+            # Looks like a proper noun (e.g., "Ethiopian coffee kiosk")
+            pass
+        else:
+            # Generic concept, lowercase first word
+            display = display[0].lower() + display[1:] if len(display) > 1 else display.lower()
+    elif words:
+        # Single word, lowercase it unless it's clearly a proper noun
+        # For simplicity, keep single words as-is
+        pass
+    
+    return display
+
+
 
 def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     """Generate a demo launch plan that adapts to user inputs.
@@ -386,12 +437,14 @@ def generate_dynamic_demo_plan(user_inputs: dict[str, Any]) -> dict[str, Any]:
     # Extract key themes from the business idea
     dietary_text = _get_dietary_focus_text(dietary_focus)
     
-    # Use the business idea directly as the core of the summary
-    # Add context from other fields only to supplement
+    # Create a natural display concept from the business idea
+    display_concept = create_display_concept(business_idea)
+    
+    # Build professional summary using the display concept
     business_summary = (
-        f"{business_idea.strip()} "
-        f"This {business_type.lower()} concept in {location} targets {target_customers if target_customers else 'local customers'}, "
-        f"focusing on delivering a curated menu that balances quality, speed, and profitability{dietary_text}."
+        f"A {display_concept} targeting {target_customers if target_customers else 'local customers'} "
+        f"in {location}. This {business_type.lower()} focuses on delivering a curated menu "
+        f"that balances quality, speed, and profitability{dietary_text}."
     )
     
     # Build positioning that reflects the BUSINESS IDEA, not just cuisine templates

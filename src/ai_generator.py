@@ -10,9 +10,12 @@ generated output or logs.
 
 from __future__ import annotations
 
+import json
 import os
+import re
 from typing import Any
 
+import requests
 from dotenv import load_dotenv
 
 from src.prompt_builder import build_launch_plan_prompt
@@ -24,6 +27,325 @@ from src.validators import coerce_launch_plan, safe_parse_json
 load_dotenv()
 
 
+def call_watsonx_api(prompt: str) -> dict[str, Any]:
+    """Call IBM watsonx.ai API to generate a launch plan.
+    
+    This function handles the complete watsonx.ai integration including:
+    - Environment variable validation
+    - API authentication
+    - Request construction
+    - Response parsing
+    - JSON extraction from model output
+    - Error handling with safe fallback
+    
+    Args:
+        prompt: The formatted prompt for the model
+        
+    Returns:
+        Validated launch plan dictionary
+        
+    Raises:
+        ValueError: If required environment variables are missing
+        requests.RequestException: If API call fails
+        
+    Security:
+        - API keys are read from environment variables only
+        - No credentials are logged or exposed in output
+        - All responses are validated before returning
+    """
+    # Validate required environment variables
+    api_key = os.getenv("WATSONX_API_KEY")
+    project_id = os.getenv("WATSONX_PROJECT_ID")
+    url = os.getenv("WATSONX_URL", "https://us-south.ml.cloud.ibm.com")
+    model_id = os.getenv("WATSONX_MODEL_ID", "ibm/granite-13b-instruct-v2")
+    
+    if not api_key:
+        raise ValueError(
+            "WATSONX_API_KEY environment variable is required for watsonx provider. "
+            "Please set it in your .env file or switch to LLM_PROVIDER=demo"
+        )
+    
+    if not project_id:
+        raise ValueError(
+            "WATSONX_PROJECT_ID environment variable is required for watsonx provider. "
+            "Please set it in your .env file or switch to LLM_PROVIDER=demo"
+        )
+    
+    # Construct the API endpoint
+    endpoint = f"{url}/ml/v1/text/generation?version=2023-05-29"
+    
+    # Prepare headers with authentication
+    headers = {
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}",
+    }
+    
+    # Prepare the request body
+    body = {
+        "input": prompt,
+        "parameters": {
+            "decoding_method": "greedy",
+            "max_new_tokens": 4000,
+            "min_new_tokens": 0,
+            "stop_sequences": [],
+            "repetition_penalty": 1.0,
+        },
+        "model_id": model_id,
+        "project_id": project_id,
+    }
+    
+    # Make the API call
+    try:
+        response = requests.post(endpoint, headers=headers, json=body, timeout=60)
+        response.raise_for_status()
+    except requests.exceptions.Timeout:
+        raise requests.RequestException(
+            "watsonx.ai API request timed out after 60 seconds. "
+            "Please try again or switch to demo mode."
+        )
+    except requests.exceptions.RequestException as e:
+        # Don't expose API key in error messages
+        error_msg = str(e).replace(api_key, "[REDACTED]") if api_key in str(e) else str(e)
+        raise requests.RequestException(
+            f"watsonx.ai API request failed: {error_msg}"
+        )
+    
+    # Parse the response
+    try:
+        result = response.json()
+        generated_text = result["results"][0]["generated_text"]
+    except (KeyError, IndexError, json.JSONDecodeError) as e:
+        raise ValueError(f"Invalid response format from watsonx.ai: {e}")
+    
+    # Extract JSON from the generated text
+    # The model might wrap JSON in markdown code blocks or add explanatory text
+    json_text = extract_json_from_text(generated_text)
+    
+    # Parse the JSON
+    plan_data = safe_parse_json(json_text)
+    if not plan_data:
+        raise ValueError(
+            "watsonx.ai returned invalid JSON. The model output could not be parsed."
+        )
+    
+    # Validate and coerce the plan to ensure it matches our schema
+    validated_plan = coerce_launch_plan(plan_data)
+    
+    return validated_plan
+
+
+def extract_json_from_text(text: str) -> str:
+    """Extract JSON object from text that may contain markdown or explanations.
+    
+    This function handles various formats that LLMs might return:
+    - Plain JSON object
+    - JSON wrapped in markdown code blocks (```json ... ```)
+    - JSON with explanatory text before/after
+    
+    Args:
+        text: Raw text from the model
+        
+    Returns:
+        Extracted JSON string
+        
+    Raises:
+        ValueError: If no valid JSON object is found
+    """
+    # Remove markdown code blocks if present
+    text = re.sub(r'```json\s*', '', text)
+    text = re.sub(r'```\s*', '', text)
+    
+    # Try to find JSON object boundaries
+    # Look for the first { and last } to extract the JSON object
+    start_idx = text.find('{')
+    end_idx = text.rfind('}')
+    
+    if start_idx == -1 or end_idx == -1 or start_idx >= end_idx:
+        raise ValueError("No valid JSON object found in model output")
+    
+    json_text = text[start_idx:end_idx + 1]
+    
+    # Validate it's actually JSON by trying to parse it
+    try:
+        json.loads(json_text)
+    except json.JSONDecodeError:
+        raise ValueError("Extracted text is not valid JSON")
+    
+    return json_text
+
+def call_openai_api(prompt: str) -> dict[str, Any]:
+    """Call OpenAI API to generate a launch plan.
+    
+    This function handles the complete OpenAI integration including:
+    - Environment variable validation
+    - API authentication
+    - Request construction using OpenAI SDK
+    - Response parsing
+    - JSON extraction from model output
+    - Error handling with safe fallback
+    
+    Args:
+        prompt: The formatted prompt for the model
+        
+    Returns:
+        Validated launch plan dictionary
+        
+    Raises:
+        ValueError: If required environment variables are missing
+        Exception: If API call fails
+        
+    Security:
+        - API keys are read from environment variables only
+        - No credentials are logged or exposed in output
+        - All responses are validated before returning
+    """
+    # Validate required environment variables
+    api_key = os.getenv("OPENAI_API_KEY")
+    model = os.getenv("OPENAI_MODEL", "gpt-4-turbo-preview")
+    
+    if not api_key:
+        raise ValueError(
+            "OPENAI_API_KEY environment variable is required for openai provider. "
+            "Please set it in your .env file or switch to LLM_PROVIDER=demo"
+        )
+    
+    try:
+        # Import OpenAI SDK (only when needed)
+        from openai import OpenAI
+        
+        # Initialize client
+        client = OpenAI(api_key=api_key)
+        
+        # Make the API call
+        response = client.chat.completions.create(
+            model=model,
+            messages=[
+                {
+                    "role": "system",
+                    "content": "You are MenuNest, an AI copilot for food entrepreneurs. You provide practical, actionable business advice."
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+            temperature=0.7,
+            max_tokens=4000,
+        )
+        
+        # Extract the generated text
+        generated_text = response.choices[0].message.content
+        
+    except ImportError:
+        raise ValueError(
+            "OpenAI package not installed. Run: pip install openai"
+        )
+    except Exception as e:
+        # Don't expose API key in error messages
+        error_msg = str(e).replace(api_key, "[REDACTED]") if api_key in str(e) else str(e)
+        raise Exception(f"OpenAI API request failed: {error_msg}")
+    
+    # Extract JSON from the generated text
+    json_text = extract_json_from_text(generated_text)
+    
+    # Parse the JSON
+    plan_data = safe_parse_json(json_text)
+    if not plan_data:
+        raise ValueError(
+            "OpenAI returned invalid JSON. The model output could not be parsed."
+        )
+    
+    # Validate and coerce the plan to ensure it matches our schema
+    validated_plan = coerce_launch_plan(plan_data)
+    
+    return validated_plan
+
+
+def call_anthropic_api(prompt: str) -> dict[str, Any]:
+    """Call Anthropic Claude API to generate a launch plan.
+    
+    This function handles the complete Anthropic integration including:
+    - Environment variable validation
+    - API authentication
+    - Request construction using Anthropic SDK
+    - Response parsing
+    - JSON extraction from model output
+    - Error handling with safe fallback
+    
+    Args:
+        prompt: The formatted prompt for the model
+        
+    Returns:
+        Validated launch plan dictionary
+        
+    Raises:
+        ValueError: If required environment variables are missing
+        Exception: If API call fails
+        
+    Security:
+        - API keys are read from environment variables only
+        - No credentials are logged or exposed in output
+        - All responses are validated before returning
+    """
+    # Validate required environment variables
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    model = os.getenv("ANTHROPIC_MODEL", "claude-3-opus-20240229")
+    
+    if not api_key:
+        raise ValueError(
+            "ANTHROPIC_API_KEY environment variable is required for anthropic provider. "
+            "Please set it in your .env file or switch to LLM_PROVIDER=demo"
+        )
+    
+    try:
+        # Import Anthropic SDK (only when needed)
+        from anthropic import Anthropic
+        
+        # Initialize client
+        client = Anthropic(api_key=api_key)
+        
+        # Make the API call
+        response = client.messages.create(
+            model=model,
+            max_tokens=4000,
+            messages=[
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ],
+        )
+        
+        # Extract the generated text
+        generated_text = response.content[0].text
+        
+    except ImportError:
+        raise ValueError(
+            "Anthropic package not installed. Run: pip install anthropic"
+        )
+    except Exception as e:
+        # Don't expose API key in error messages
+        error_msg = str(e).replace(api_key, "[REDACTED]") if api_key in str(e) else str(e)
+        raise Exception(f"Anthropic API request failed: {error_msg}")
+    
+    # Extract JSON from the generated text
+    json_text = extract_json_from_text(generated_text)
+    
+    # Parse the JSON
+    plan_data = safe_parse_json(json_text)
+    if not plan_data:
+        raise ValueError(
+            "Anthropic returned invalid JSON. The model output could not be parsed."
+        )
+    
+    # Validate and coerce the plan to ensure it matches our schema
+    validated_plan = coerce_launch_plan(plan_data)
+    
+    return validated_plan
+
+
+
 def generate_launch_plan(
     user_inputs: dict[str, Any],
     use_demo: bool = True,
@@ -32,7 +354,17 @@ def generate_launch_plan(
     
     This function supports multiple modes:
     1. Demo mode (default): Returns validated sample data with optional localization
-    2. Live AI mode: Calls external LLM provider (requires API credentials)
+    2. watsonx mode: Calls IBM watsonx.ai for live AI generation (requires credentials)
+    3. openai mode: Calls OpenAI GPT models for live AI generation (requires API key)
+    4. anthropic mode: Calls Anthropic Claude models for live AI generation (requires API key)
+    
+    Provider priority:
+    - If use_demo=True, always use demo mode
+    - If LLM_PROVIDER=watsonx, attempt watsonx.ai (falls back to demo on error)
+    - If LLM_PROVIDER=openai, attempt OpenAI (falls back to demo on error)
+    - If LLM_PROVIDER=anthropic, attempt Anthropic (falls back to demo on error)
+    - If LLM_PROVIDER=demo or unset, use demo mode
+    - Any other provider value falls back to demo mode with a warning
     
     Args:
         user_inputs: Dictionary containing business concept details
@@ -43,8 +375,14 @@ def generate_launch_plan(
         
     Security:
         - API keys are read from environment variables only
-        - No API keys are included in generated output
+        - No API keys are included in generated output or logs
         - All responses are validated before returning
+        
+    Error Handling:
+        - Missing credentials: Falls back to demo mode with warning
+        - API call failures: Falls back to demo mode with error message
+        - Invalid JSON from model: Falls back to demo mode with warning
+        - Never crashes the application
     """
     # Determine which provider to use
     provider = os.getenv("LLM_PROVIDER", "demo").lower().strip()
@@ -65,22 +403,163 @@ def generate_launch_plan(
         
         return plan
 
-    # Live AI mode: Build prompt and call external provider
-    # Note: This is a placeholder for future LLM integration
-    prompt = build_launch_plan_prompt(user_inputs)
+    # watsonx mode: Call IBM watsonx.ai for live AI generation
+    if provider == "watsonx":
+        try:
+            # Build the prompt
+            prompt = build_launch_plan_prompt(user_inputs)
+            
+            # Call watsonx.ai API
+            plan = call_watsonx_api(prompt)
+            
+            # The plan is already validated by call_watsonx_api
+            # Language localization is handled by the prompt if output_language is set
+            # No additional localization needed here as the model generates in the target language
+            
+            return plan
+            
+        except ValueError as e:
+            # Missing credentials or invalid response format
+            error_msg = str(e)
+            print(f"⚠️  watsonx.ai error: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
+            
+        except requests.RequestException as e:
+            # API call failed (network, timeout, server error, etc.)
+            error_msg = str(e)
+            print(f"⚠️  watsonx.ai API call failed: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
+            
+        except Exception as e:
+            # Unexpected error - catch all to prevent app crash
+            error_msg = str(e)
+            print(f"⚠️  Unexpected error with watsonx.ai: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
     
-    # TODO: Implement actual LLM provider calls here
-    # Example structure:
-    # if provider == "openai":
-    #     response = call_openai_api(prompt)
-    # elif provider == "anthropic":
-    #     response = call_anthropic_api(prompt)
-    # elif provider == "watsonx":
-    #     response = call_watsonx_api(prompt)
+    # OpenAI mode: Call OpenAI API for live AI generation
+    if provider == "openai":
+        try:
+            # Build the prompt
+            prompt = build_launch_plan_prompt(user_inputs)
+            
+            # Call OpenAI API
+            plan = call_openai_api(prompt)
+            
+            # The plan is already validated by call_openai_api
+            # Language localization is handled by the prompt if output_language is set
+            
+            return plan
+            
+        except ValueError as e:
+            # Missing credentials or invalid response format
+            error_msg = str(e)
+            print(f"⚠️  OpenAI error: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
+            
+        except Exception as e:
+            # API call failed or unexpected error
+            error_msg = str(e)
+            print(f"⚠️  OpenAI API call failed: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
     
-    # For now, fall back to demo data even in "live" mode
-    # This ensures the app never fails during demos
-    plan = coerce_launch_plan(SAMPLE_LAUNCH_PLAN)
+    # Anthropic mode: Call Anthropic Claude API for live AI generation
+    if provider == "anthropic":
+        try:
+            # Build the prompt
+            prompt = build_launch_plan_prompt(user_inputs)
+            
+            # Call Anthropic API
+            plan = call_anthropic_api(prompt)
+            
+            # The plan is already validated by call_anthropic_api
+            # Language localization is handled by the prompt if output_language is set
+            
+            return plan
+            
+        except ValueError as e:
+            # Missing credentials or invalid response format
+            error_msg = str(e)
+            print(f"⚠️  Anthropic error: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
+            
+        except Exception as e:
+            # API call failed or unexpected error
+            error_msg = str(e)
+            print(f"⚠️  Anthropic API call failed: {error_msg}")
+            print("ℹ️  Falling back to demo mode for reliability.")
+            
+            # Fall back to demo mode
+            plan = generate_dynamic_demo_plan(user_inputs)
+            plan = coerce_launch_plan(plan)
+            
+            if output_language == "Italian":
+                plan = localize_demo_plan_to_italian(plan)
+            
+            return plan
+    
+    # Unknown provider: warn and fall back to demo mode
+    if provider not in ["demo", "watsonx", "openai", "anthropic"]:
+        print(f"⚠️  Unknown LLM_PROVIDER: '{provider}'")
+        print("ℹ️  Supported providers: 'demo', 'watsonx', 'openai', 'anthropic'")
+        print("ℹ️  Falling back to demo mode.")
+    
+    # Default fallback to demo mode
+    plan = generate_dynamic_demo_plan(user_inputs)
+    plan = coerce_launch_plan(plan)
     
     if output_language == "Italian":
         plan = localize_demo_plan_to_italian(plan)

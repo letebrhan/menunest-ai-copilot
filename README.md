@@ -261,15 +261,103 @@ Run the app:
 streamlit run app.py
 ```
 
-## Demo Mode
+## AI Provider Configuration
 
-MenuNest includes fallback sample data, so the demo can run even if the AI API is not configured.
+MenuNest supports four AI provider modes:
 
-Set this in `.env`:
+### 1. Demo Mode (Default - Recommended for Testing)
 
-```text
+No API keys required. Uses dynamic demo generation based on user inputs.
+
+```bash
 LLM_PROVIDER=demo
 ```
+
+**Advantages:**
+- No cost
+- Instant responses
+- 100% reliable
+- Perfect for presentations and judging
+
+### 2. IBM watsonx.ai
+
+Use IBM watsonx.ai for live AI generation.
+
+**Setup:**
+
+1. Get credentials from [IBM Cloud](https://cloud.ibm.com/)
+2. Create a watsonx.ai project
+3. Get your API key from IBM Cloud IAM
+4. Add to `.env`:
+
+```bash
+LLM_PROVIDER=watsonx
+WATSONX_API_KEY=your_api_key_here
+WATSONX_PROJECT_ID=your_project_id_here
+WATSONX_URL=https://us-south.ml.cloud.ibm.com
+WATSONX_MODEL_ID=ibm/granite-13b-instruct-v2
+```
+
+**Recommended Models:**
+- `ibm/granite-13b-instruct-v2` (balanced)
+- `meta-llama/llama-3-70b-instruct` (advanced)
+
+### 3. OpenAI
+
+Use OpenAI GPT models for live AI generation.
+
+**Setup:**
+
+1. Get API key from [OpenAI Platform](https://platform.openai.com/api-keys)
+2. Add to `.env`:
+
+```bash
+LLM_PROVIDER=openai
+OPENAI_API_KEY=your_api_key_here
+OPENAI_MODEL=gpt-4-turbo-preview
+```
+
+**Recommended Models:**
+- `gpt-4-turbo-preview` (best quality)
+- `gpt-3.5-turbo` (faster, lower cost)
+
+### 4. Anthropic Claude
+
+Use Anthropic Claude models for live AI generation.
+
+**Setup:**
+
+1. Get API key from [Anthropic Console](https://console.anthropic.com/)
+2. Add to `.env`:
+
+```bash
+LLM_PROVIDER=anthropic
+ANTHROPIC_API_KEY=your_api_key_here
+ANTHROPIC_MODEL=claude-3-opus-20240229
+```
+
+**Recommended Models:**
+- `claude-3-opus-20240229` (best quality)
+- `claude-3-sonnet-20240229` (balanced)
+
+### Error Handling
+
+All AI providers automatically fall back to demo mode if:
+- API keys are missing
+- API calls fail
+- Network errors occur
+- Invalid responses are received
+
+The app **never crashes** - it always provides a working launch plan.
+
+### Security
+
+✅ All API keys from environment variables only
+✅ No keys in code or version control
+✅ Keys never logged or exposed in output
+✅ Keys redacted from error messages
+
+**Important:** Never commit your `.env` file. Only commit `.env.example` with placeholders.
 
 ## Deployment
 

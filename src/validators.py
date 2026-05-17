@@ -168,7 +168,7 @@ def coerce_launch_plan(data: dict[str, Any]) -> dict[str, Any]:
     Raises:
         ValidationError: If the data doesn't match the schema
     """
-    return LaunchPlan(**data).dict()
+    return LaunchPlan(**data).model_dump()
 
 
 def safe_parse_json(raw_text: str) -> dict[str, Any] | None:

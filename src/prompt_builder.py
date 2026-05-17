@@ -46,7 +46,13 @@ Generate a comprehensive, realistic launch plan that helps this entrepreneur val
 concept before investing heavily in rent, equipment, or inventory.
 
 # Output Requirements
-Return ONLY valid JSON (no markdown, no code blocks, no explanations) with this exact structure:
+CRITICAL: You MUST return ONLY a valid JSON object. Do not include:
+- Markdown code blocks (no ```json or ```)
+- Explanatory text before or after the JSON
+- Comments inside the JSON
+- Any text that is not part of the JSON structure
+
+Return this exact JSON structure with all fields populated:
 
 {{
   "business_summary": "2-3 sentence overview of the business concept and target market",
