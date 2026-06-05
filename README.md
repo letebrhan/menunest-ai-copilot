@@ -366,10 +366,10 @@ The app **never crashes** - it always provides a working launch plan.
 
 ### Security
 
-✅ All API keys from environment variables only
-✅ No keys in code or version control
-✅ Keys never logged or exposed in output
-✅ Keys redacted from error messages
+All API keys must be provided via environment variables only
+No keys in code or version control
+Keys are never logged or exposed in output
+Keys are redacted from error messages
 
 **Important:** Never commit your `.env` file. Only commit `.env.example` with placeholders.
 
