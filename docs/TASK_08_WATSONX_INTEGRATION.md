@@ -15,32 +15,32 @@ This document describes the integration of IBM watsonx.ai as a live AI provider 
 
 ### Key Features
 
-✅ **Provider Selection Logic**
+- **Provider Selection Logic**
 - Demo mode by default (no API keys required)
 - watsonx mode when `LLM_PROVIDER=watsonx` and credentials are set
 - Automatic fallback to demo mode on any error
 - Clear warnings for unknown providers
 
-✅ **watsonx.ai Integration**
+- **watsonx.ai Integration**
 - Full API integration with IBM watsonx.ai
 - Environment variable-based configuration
 - JSON extraction from model output (handles markdown, explanations)
 - Response validation using existing schema validators
 
-✅ **Error Handling**
+- **Error Handling**
 - Missing credentials → fallback to demo mode with warning
 - API timeouts → fallback to demo mode
 - Network errors → fallback to demo mode
 - Invalid JSON → fallback to demo mode
 - Never crashes the application
 
-✅ **Security**
+- **Security**
 - All credentials from environment variables only
 - API keys never logged or exposed in output
 - Credentials redacted from error messages
 - No hardcoded secrets anywhere
 
-✅ **Testing**
+- **Testing**
 - 23 comprehensive tests covering all scenarios
 - Provider selection logic tested
 - API integration tested with mocks
@@ -212,16 +212,16 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 ### Test Coverage
 
-- ✅ Provider selection (demo, watsonx, unknown)
-- ✅ API integration (success, timeout, errors)
-- ✅ Error handling and fallback
-- ✅ JSON extraction (plain, markdown, with text)
-- ✅ Security (no credentials in output/logs)
-- ✅ Language support (English, Italian)
+- - Provider selection (demo, watsonx, unknown)
+- - API integration (success, timeout, errors)
+- - Error handling and fallback
+- - JSON extraction (plain, markdown, with text)
+- - Security (no credentials in output/logs)
+- - Language support (English, Italian)
 
 ## Security Best Practices
 
-### ✅ Implemented
+### - Implemented
 
 1. **Environment Variables Only**
    - All credentials from `.env` file
@@ -309,12 +309,12 @@ Potential improvements for future versions:
 
 The watsonx.ai integration provides:
 
-✅ Live AI generation when credentials are available  
-✅ Automatic fallback to demo mode on any error  
-✅ Zero configuration required for demo mode  
-✅ Comprehensive error handling  
-✅ Full security compliance  
-✅ Extensive test coverage  
-✅ Language support (English, Italian)  
+- Live AI generation when credentials are available  
+- Automatic fallback to demo mode on any error  
+- Zero configuration required for demo mode  
+- Comprehensive error handling  
+- Full security compliance  
+- Extensive test coverage  
+- Language support (English, Italian)  
 
 The app remains reliable and never crashes, regardless of provider configuration or API availability.

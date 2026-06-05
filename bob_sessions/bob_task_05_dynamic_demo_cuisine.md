@@ -720,12 +720,12 @@ I'll help you fix the demo mode to respond to user inputs and improve the cuisin
  57 | 
  58 |     st.markdown("### 🤖 How IBM Bob Helped")
  59 |     st.markdown("""
- 60 |     - ✅ Product workflow design
- 61 |     - ✅ Repository structure & cleanup
- 62 |     - ✅ Streamlit UI prototype
- 63 |     - ✅ Prompt engineering & schema design
- 64 |     - ✅ Code debugging & optimization
- 65 |     - ✅ Tests and documentation
+ 60 |     - - Product workflow design
+ 61 |     - - Repository structure & cleanup
+ 62 |     - - Streamlit UI prototype
+ 63 |     - - Prompt engineering & schema design
+ 64 |     - - Code debugging & optimization
+ 65 |     - - Tests and documentation
  66 |     """)
  67 | 
  68 |     st.markdown("### 📋 What MenuNest Generates")
@@ -735,7 +735,7 @@ I'll help you fix the demo mode to respond to user inputs and improve the cuisin
  72 |     - 🥗 **Ingredients & Allergens** - Detailed preparation notes
  73 |     - 👥 **Customer Personas** - Target segments and marketing angles
  74 |     - 📱 **Marketing Content** - Social media copy and launch strategy
- 75 |     - ✅ **Launch Checklist** - Step-by-step action items
+ 75 |     - - **Launch Checklist** - Step-by-step action items
  76 |     - 📥 **Export Options** - Download as Markdown or JSON
  77 |     """)
  78 | 
@@ -743,7 +743,7 @@ I'll help you fix the demo mode to respond to user inputs and improve the cuisin
  80 |     st.markdown("### ⚙️ Demo Settings")
  81 |     use_demo = st.toggle("🔒 Use Stable Demo Mode", value=True)
  82 |     st.caption(
- 83 |         "✅ **Recommended for live judging**\n\n"
+ 83 |         "- **Recommended for live judging**\n\n"
  84 |         "Demo mode uses pre-validated sample data, ensuring reliable results "
  85 |         "without requiring external API keys or network access."
  86 |     )
@@ -925,7 +925,7 @@ I'll help you fix the demo mode to respond to user inputs and improve the cuisin
 208 |             "💰 Estimating pricing ranges...",
 209 |             "👥 Creating customer personas...",
 210 |             "📱 Preparing marketing content...",
-211 |             "✅ Generating launch checklist...",
+211 |             "- Generating launch checklist...",
 212 |         ]
 213 | 
 214 |         progress_bar = st.progress(0)
@@ -956,7 +956,7 @@ I'll help you fix the demo mode to respond to user inputs and improve the cuisin
 239 |                 
 240 |                 # Show success message
 241 |                 st.success(
-242 |                     "✅ **Launch Plan Generated Successfully!**\n\n"
+242 |                     "- **Launch Plan Generated Successfully!**\n\n"
 243 |                     f"Your personalized plan is ready. Scroll down to explore the results."
 244 |                 )
 245 |                 
@@ -2784,7 +2784,7 @@ Perfect! All 48 tests pass. Now let me create comprehensive documentation for th
 <content># Task 5: Dynamic Demo Mode & Cuisine Input Improvements
 
 **Date:** 2026-05-16  
-**Status:** ✅ Completed  
+**Status:** - Completed  
 **Focus:** Make demo mode respond to user inputs and improve cuisine selection
 
 ## Problem Statement
@@ -3052,13 +3052,13 @@ Both English and Italian outputs work correctly:
 
 All generated plans pass validation:
 
-- ✅ All 7 required sections present
-- ✅ Menu items have required fields
-- ✅ Complexity values are valid
-- ✅ Readiness scores in range 0-100
-- ✅ Descriptions meet minimum length
-- ✅ Export to Markdown and JSON works
-- ✅ Language localization preserves structure
+- - All 7 required sections present
+- - Menu items have required fields
+- - Complexity values are valid
+- - Readiness scores in range 0-100
+- - Descriptions meet minimum length
+- - Export to Markdown and JSON works
+- - Language localization preserves structure
 
 ## How to Test
 
@@ -3187,7 +3187,7 @@ Let me create a shorter, more focused documentation file:
 <content># Task 5: Dynamic Demo Mode & Cuisine Input Improvements
 
 **Date:** 2026-05-16  
-**Status:** ✅ Completed  
+**Status:** - Completed  
 **Focus:** Make demo mode respond to user inputs and improve cuisine selection
 
 ## Problem Statement
@@ -3332,13 +3332,13 @@ $ python3 -m pytest tests/ -v
 ## Validation
 
 All generated plans pass validation:
-- ✅ All 7 required sections present
-- ✅ Menu items have required fields
-- ✅ Complexity values are valid
-- ✅ Readiness scores in range 0-100
-- ✅ Descriptions meet minimum length
-- ✅ Export to Markdown and JSON works
-- ✅ Language localization preserves structure
+- - All 7 required sections present
+- - Menu items have required fields
+- - Complexity values are valid
+- - Readiness scores in range 0-100
+- - Descriptions meet minimum length
+- - Export to Markdown and JSON works
+- - Language localization preserves structure
 
 ## How to Test
 
@@ -3504,7 +3504,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 <attempt_completion>
 <result>
-## Task 5: Dynamic Demo Mode & Cuisine Input - COMPLETED ✅
+## Task 5: Dynamic Demo Mode & Cuisine Input - COMPLETED -
 
 ### Problem Fixed
 Demo mode was returning the same static Ethiopian coffee kiosk text regardless of user inputs, making the app appear unresponsive during judging. The cuisine field was also a plain text input with no guidance.
@@ -3540,17 +3540,17 @@ Demo mode was returning the same static Ethiopian coffee kiosk text regardless o
 
 ### Key Results
 
-✅ **Demo mode now responds to user inputs** - Different business types, cuisines, locations, and budgets generate different, contextually appropriate content
+- **Demo mode now responds to user inputs** - Different business types, cuisines, locations, and budgets generate different, contextually appropriate content
 
-✅ **Cuisine dropdown improves UX** - Users see available options and can add custom cuisines
+- **Cuisine dropdown improves UX** - Users see available options and can add custom cuisines
 
-✅ **100% test coverage maintained** - All 48 tests pass, including 12 new dynamic demo tests
+- **100% test coverage maintained** - All 48 tests pass, including 12 new dynamic demo tests
 
-✅ **Language support preserved** - English and Italian outputs both work correctly
+- **Language support preserved** - English and Italian outputs both work correctly
 
-✅ **No API keys required** - Fully functional demo mode without external dependencies
+- **No API keys required** - Fully functional demo mode without external dependencies
 
-✅ **Validation intact** - All generated plans pass existing validation rules
+- **Validation intact** - All generated plans pass existing validation rules
 
 ### How to Test
 1. Run app: `streamlit run app.py`
@@ -3758,7 +3758,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 <attempt_completion>
 <result>
-## Task 5: Dynamic Demo Mode & Cuisine Input + Landing Text - COMPLETED ✅
+## Task 5: Dynamic Demo Mode & Cuisine Input + Landing Text - COMPLETED -
 
 ### Problems Fixed
 
@@ -3796,17 +3796,17 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 ### Key Results
 
-✅ **Demo mode responds to user inputs** - Different cuisines, locations, budgets generate contextually appropriate content
+- **Demo mode responds to user inputs** - Different cuisines, locations, budgets generate contextually appropriate content
 
-✅ **Cuisine dropdown improves UX** - Users see options and can add custom cuisines
+- **Cuisine dropdown improves UX** - Users see options and can add custom cuisines
 
-✅ **Landing text is clearer** - Specifically explains what MenuNest does and who it's for
+- **Landing text is clearer** - Specifically explains what MenuNest does and who it's for
 
-✅ **100% test coverage** - All 48 tests pass
+- **100% test coverage** - All 48 tests pass
 
-✅ **Language support preserved** - English and Italian outputs work correctly
+- **Language support preserved** - English and Italian outputs work correctly
 
-✅ **No API keys required** - Fully functional demo mode
+- **No API keys required** - Fully functional demo mode
 
 ### How to Test
 1. Run: `streamlit run app.py`
@@ -5854,7 +5854,7 @@ Excellent! All 53 tests pass. Now let me update the documentation to include the
 # Task 5: Dynamic Demo Mode & Cuisine Input Improvements
 
 **Date:** 2026-05-16  
-**Status:** ✅ Completed  
+**Status:** - Completed  
 **Focus:** Make demo mode respond to user inputs and improve cuisine selection
 
 ## Problem Statement
@@ -5868,7 +5868,7 @@ Excellent! All 53 tests pass. Now let me update the documentation to include the
 # Task 5: Dynamic Demo Mode & Cuisine Input Improvements
 
 **Date:** 2026-05-16  
-**Status:** ✅ Completed  
+**Status:** - Completed  
 **Focus:** Make demo mode respond to user inputs, improve cuisine selection, and implement dynamic readiness scoring
 
 ## Problem Statement
@@ -6101,7 +6101,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 <attempt_completion>
 <result>
-## Task 5: Dynamic Demo Mode, Cuisine Input & Readiness Scoring - COMPLETED ✅
+## Task 5: Dynamic Demo Mode, Cuisine Input & Readiness Scoring - COMPLETED -
 
 ### Problems Fixed
 
@@ -6155,19 +6155,19 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 ### Key Results
 
-✅ **Demo mode fully responsive** - All inputs affect generated content
+- **Demo mode fully responsive** - All inputs affect generated content
 
-✅ **Readiness score is dynamic** - Changes based on 7 factors (50-90 range)
+- **Readiness score is dynamic** - Changes based on 7 factors (50-90 range)
 
-✅ **Cuisine dropdown improves UX** - 11 options + custom input
+- **Cuisine dropdown improves UX** - 11 options + custom input
 
-✅ **Realistic scoring** - Restaurant + low budget = ~55, Coffee kiosk + detailed inputs = ~85
+- **Realistic scoring** - Restaurant + low budget = ~55, Coffee kiosk + detailed inputs = ~85
 
-✅ **Dashboard feels alive** - Score and label change with inputs
+- **Dashboard feels alive** - Score and label change with inputs
 
-✅ **100% test coverage** - All 53 tests pass
+- **100% test coverage** - All 53 tests pass
 
-✅ **Language support intact** - English and Italian work correctly
+- **Language support intact** - English and Italian work correctly
 
 ### How to Test Readiness Scoring
 
@@ -8372,7 +8372,7 @@ Perfect! All 59 tests pass (36 original + 23 new). Now let me create a final com
 
 <attempt_completion>
 <result>
-## Task 5: Dynamic Demo Mode, Cuisine Input, Readiness Scoring & Dietary Focus - COMPLETED ✅
+## Task 5: Dynamic Demo Mode, Cuisine Input, Readiness Scoring & Dietary Focus - COMPLETED -
 
 ### Problems Fixed
 
@@ -8484,13 +8484,13 @@ $ python3 -m pytest tests/ -v
 ### Key Achievement
 
 The app now responds to EVERY input change:
-✅ Business type affects complexity and score
-✅ Budget affects readiness score
-✅ Cuisine affects menu items and positioning
-✅ Dietary focus affects summary, positioning, menu, risks, and recommendations
-✅ Target customers affect personas
-✅ Location affects marketing content
-✅ Launch goal affects recommendations
+- Business type affects complexity and score
+- Budget affects readiness score
+- Cuisine affects menu items and positioning
+- Dietary focus affects summary, positioning, menu, risks, and recommendations
+- Target customers affect personas
+- Location affects marketing content
+- Launch goal affects recommendations
 
 Demo mode is now truly dynamic and intelligent!
 </result>

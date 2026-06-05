@@ -230,7 +230,7 @@ All providers implement comprehensive error handling:
 
 ## Security Features
 
-### ✅ Implemented
+### - Implemented
 
 1. **Environment Variables Only**
    - All credentials from `.env` file
@@ -278,16 +278,16 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 The test suite includes 31 tests covering:
 
-- ✅ Provider selection (demo, watsonx, openai, anthropic, unknown)
-- ✅ API integration for all providers
-- ✅ Missing credentials handling
-- ✅ API failures and timeouts
-- ✅ Invalid response handling
-- ✅ JSON extraction (plain, markdown, with text)
-- ✅ Security (no credentials in output/logs)
-- ✅ Language support (English, Italian)
-- ✅ Fallback behavior
-- ✅ Multi-provider selection logic
+- - Provider selection (demo, watsonx, openai, anthropic, unknown)
+- - API integration for all providers
+- - Missing credentials handling
+- - API failures and timeouts
+- - Invalid response handling
+- - JSON extraction (plain, markdown, with text)
+- - Security (no credentials in output/logs)
+- - Language support (English, Italian)
+- - Fallback behavior
+- - Multi-provider selection logic
 
 ### Test Results
 
@@ -405,10 +405,10 @@ Potential improvements for future versions:
 
 MenuNest now supports four AI provider modes:
 
-✅ **Demo mode** - Free, instant, 100% reliable (default)  
-✅ **IBM watsonx.ai** - Enterprise-grade AI with IBM models  
-✅ **OpenAI** - Industry-leading GPT models  
-✅ **Anthropic Claude** - Advanced reasoning and long context  
+- **Demo mode** - Free, instant, 100% reliable (default)  
+- **IBM watsonx.ai** - Enterprise-grade AI with IBM models  
+- **OpenAI** - Industry-leading GPT models  
+- **Anthropic Claude** - Advanced reasoning and long context  
 
 All providers include:
 - Automatic fallback to demo mode

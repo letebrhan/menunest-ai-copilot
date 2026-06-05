@@ -3696,32 +3696,32 @@ This document describes the integration of IBM watsonx.ai as a live AI provider 
 
 ### Key Features
 
-✅ **Provider Selection Logic**
+- **Provider Selection Logic**
 - Demo mode by default (no API keys required)
 - watsonx mode when `LLM_PROVIDER=watsonx` and credentials are set
 - Automatic fallback to demo mode on any error
 - Clear warnings for unknown providers
 
-✅ **watsonx.ai Integration**
+- **watsonx.ai Integration**
 - Full API integration with IBM watsonx.ai
 - Environment variable-based configuration
 - JSON extraction from model output (handles markdown, explanations)
 - Response validation using existing schema validators
 
-✅ **Error Handling**
+- **Error Handling**
 - Missing credentials → fallback to demo mode with warning
 - API timeouts → fallback to demo mode
 - Network errors → fallback to demo mode
 - Invalid JSON → fallback to demo mode
 - Never crashes the application
 
-✅ **Security**
+- **Security**
 - All credentials from environment variables only
 - API keys never logged or exposed in output
 - Credentials redacted from error messages
 - No hardcoded secrets anywhere
 
-✅ **Testing**
+- **Testing**
 - 23 comprehensive tests covering all scenarios
 - Provider selection logic tested
 - API integration tested with mocks
@@ -3893,16 +3893,16 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 ### Test Coverage
 
-- ✅ Provider selection (demo, watsonx, unknown)
-- ✅ API integration (success, timeout, errors)
-- ✅ Error handling and fallback
-- ✅ JSON extraction (plain, markdown, with text)
-- ✅ Security (no credentials in output/logs)
-- ✅ Language support (English, Italian)
+- - Provider selection (demo, watsonx, unknown)
+- - API integration (success, timeout, errors)
+- - Error handling and fallback
+- - JSON extraction (plain, markdown, with text)
+- - Security (no credentials in output/logs)
+- - Language support (English, Italian)
 
 ## Security Best Practices
 
-### ✅ Implemented
+### - Implemented
 
 1. **Environment Variables Only**
    - All credentials from `.env` file
@@ -3990,13 +3990,13 @@ Potential improvements for future versions:
 
 The watsonx.ai integration provides:
 
-✅ Live AI generation when credentials are available  
-✅ Automatic fallback to demo mode on any error  
-✅ Zero configuration required for demo mode  
-✅ Comprehensive error handling  
-✅ Full security compliance  
-✅ Extensive test coverage  
-✅ Language support (English, Italian)  
+- Live AI generation when credentials are available  
+- Automatic fallback to demo mode on any error  
+- Zero configuration required for demo mode  
+- Comprehensive error handling  
+- Full security compliance  
+- Extensive test coverage  
+- Language support (English, Italian)  
 
 The app remains reliable and never crashes, regardless of provider configuration or API availability.
 </content>
@@ -4131,7 +4131,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 <attempt_completion>
 <result>
-## Task 8: watsonx.ai Integration - COMPLETED ✅
+## Task 8: watsonx.ai Integration - COMPLETED -
 
 Successfully integrated IBM watsonx.ai as a live AI provider for MenuNest with comprehensive error handling and automatic fallback to demo mode.
 
@@ -4183,11 +4183,11 @@ python3 -m pytest tests/ -v
 
 ### Security Features
 
-✅ All credentials from environment variables only  
-✅ No API keys in logs or generated output  
-✅ API keys redacted from error messages  
-✅ `.env` file in `.gitignore`  
-✅ Safe placeholders in `.env.example`  
+- All credentials from environment variables only  
+- No API keys in logs or generated output  
+- API keys redacted from error messages  
+- `.env` file in `.gitignore`  
+- Safe placeholders in `.env.example`  
 
 ### Error Handling
 
@@ -4199,13 +4199,13 @@ python3 -m pytest tests/ -v
 
 ### Key Features
 
-✅ watsonx.ai integration with full API support  
-✅ JSON extraction from model output (handles markdown, explanations)  
-✅ Response validation using existing schema validators  
-✅ Automatic fallback to demo mode on any error  
-✅ Language support (English, Italian)  
-✅ Comprehensive test coverage  
-✅ Complete documentation  
+- watsonx.ai integration with full API support  
+- JSON extraction from model output (handles markdown, explanations)  
+- Response validation using existing schema validators  
+- Automatic fallback to demo mode on any error  
+- Language support (English, Italian)  
+- Comprehensive test coverage  
+- Complete documentation  
 
 ### App Title Preserved
 
@@ -4213,13 +4213,13 @@ python3 -m pytest tests/ -v
 
 ### No Breaking Changes
 
-✅ Demo mode still works without API keys  
-✅ Dynamic demo generation intact  
-✅ Validation logic unchanged  
-✅ Language support working  
-✅ Exports working  
-✅ All existing tests pass  
-✅ UI unchanged
+- Demo mode still works without API keys  
+- Dynamic demo generation intact  
+- Validation logic unchanged  
+- Language support working  
+- Exports working  
+- All existing tests pass  
+- UI unchanged
 </result>
 </attempt_completion>
 
@@ -6592,10 +6592,10 @@ The app **never crashes** - it always provides a working launch plan.
 
 ### Security
 
-✅ All API keys from environment variables only  
-✅ No keys in code or version control  
-✅ Keys never logged or exposed in output  
-✅ Keys redacted from error messages  
+- All API keys from environment variables only  
+- No keys in code or version control  
+- Keys never logged or exposed in output  
+- Keys redacted from error messages  
 
 **Important:** Never commit your `.env` file. Only commit `.env.example` with placeholders.
 
@@ -6912,7 +6912,7 @@ All providers implement comprehensive error handling:
 
 ## Security Features
 
-### ✅ Implemented
+### - Implemented
 
 1. **Environment Variables Only**
    - All credentials from `.env` file
@@ -6960,16 +6960,16 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 The test suite includes 31 tests covering:
 
-- ✅ Provider selection (demo, watsonx, openai, anthropic, unknown)
-- ✅ API integration for all providers
-- ✅ Missing credentials handling
-- ✅ API failures and timeouts
-- ✅ Invalid response handling
-- ✅ JSON extraction (plain, markdown, with text)
-- ✅ Security (no credentials in output/logs)
-- ✅ Language support (English, Italian)
-- ✅ Fallback behavior
-- ✅ Multi-provider selection logic
+- - Provider selection (demo, watsonx, openai, anthropic, unknown)
+- - API integration for all providers
+- - Missing credentials handling
+- - API failures and timeouts
+- - Invalid response handling
+- - JSON extraction (plain, markdown, with text)
+- - Security (no credentials in output/logs)
+- - Language support (English, Italian)
+- - Fallback behavior
+- - Multi-provider selection logic
 
 ### Test Results
 
@@ -7087,10 +7087,10 @@ Potential improvements for future versions:
 
 MenuNest now supports four AI provider modes:
 
-✅ **Demo mode** - Free, instant, 100% reliable (default)  
-✅ **IBM watsonx.ai** - Enterprise-grade AI with IBM models  
-✅ **OpenAI** - Industry-leading GPT models  
-✅ **Anthropic Claude** - Advanced reasoning and long context  
+- **Demo mode** - Free, instant, 100% reliable (default)  
+- **IBM watsonx.ai** - Enterprise-grade AI with IBM models  
+- **OpenAI** - Industry-leading GPT models  
+- **Anthropic Claude** - Advanced reasoning and long context  
 
 All providers include:
 - Automatic fallback to demo mode
@@ -7253,7 +7253,7 @@ IMPORTANT: When task status changes, remember to call the `update_todo_list` too
 
 <attempt_completion>
 <result>
-## Task 8: Multi-Provider AI Integration - COMPLETED ✅
+## Task 8: Multi-Provider AI Integration - COMPLETED -
 
 Successfully extended MenuNest to support four LLM provider modes with comprehensive error handling and automatic fallback to demo mode.
 
@@ -7325,12 +7325,12 @@ All providers implement comprehensive error handling:
 
 ### Security Features
 
-✅ All credentials from environment variables only  
-✅ No API keys in code or version control  
-✅ Keys never logged or exposed in output  
-✅ Keys redacted from error messages  
-✅ `.env` file in `.gitignore`  
-✅ Safe placeholders in `.env.example`  
+- All credentials from environment variables only  
+- No API keys in code or version control  
+- Keys never logged or exposed in output  
+- Keys redacted from error messages  
+- `.env` file in `.gitignore`  
+- Safe placeholders in `.env.example`  
 
 ### Testing
 
@@ -7347,14 +7347,14 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 ### Key Features
 
-✅ Four AI provider modes (demo, watsonx, openai, anthropic)  
-✅ Automatic fallback to demo mode on any error  
-✅ JSON extraction from model output (handles markdown, explanations)  
-✅ Response validation using existing schema validators  
-✅ Language support (English, Italian)  
-✅ Comprehensive test coverage  
-✅ Complete documentation in README and docs/  
-✅ Security best practices  
+- Four AI provider modes (demo, watsonx, openai, anthropic)  
+- Automatic fallback to demo mode on any error  
+- JSON extraction from model output (handles markdown, explanations)  
+- Response validation using existing schema validators  
+- Language support (English, Italian)  
+- Comprehensive test coverage  
+- Complete documentation in README and docs/  
+- Security best practices  
 
 ### App Title Preserved
 
@@ -7362,15 +7362,15 @@ python3 -m pytest tests/test_watsonx_integration.py -v
 
 ### No Breaking Changes
 
-✅ Demo mode still works without API keys  
-✅ Dynamic demo generation intact  
-✅ Validation logic unchanged  
-✅ Language support working  
-✅ Exports working  
-✅ All existing tests pass  
-✅ UI unchanged  
-✅ Internal JSON keys remain in English  
-✅ Only user-facing text is localized  
+- Demo mode still works without API keys  
+- Dynamic demo generation intact  
+- Validation logic unchanged  
+- Language support working  
+- Exports working  
+- All existing tests pass  
+- UI unchanged  
+- Internal JSON keys remain in English  
+- Only user-facing text is localized  
 
 ### How to Use
 
