@@ -223,6 +223,8 @@ menunest-ai-copilot/
 
 ## How to Run Locally
 
+Follow these robust steps to run MenuNest locally. The project ships a `.streamlit/config.toml` file (UI theme and toolbar settings) that Streamlit will automatically pick up.
+
 Clone the repository:
 
 ```bash
@@ -230,17 +232,17 @@ git clone https://github.com/your-username/menunest-ai-copilot.git
 cd menunest-ai-copilot
 ```
 
-Create and activate a virtual environment:
+Create and activate a virtual environment (POSIX):
 
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-On Windows:
+On Windows (PowerShell):
 
-```bash
-venv\Scripts\activate
+```powershell
+venv\Scripts\Activate.ps1
 ```
 
 Install dependencies:
@@ -249,17 +251,29 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Create your environment file:
+Create your environment file (copy placeholders):
 
 ```bash
 cp .env.example .env
+# Edit .env to add any provider keys if you plan to use live AI providers
 ```
 
-Run the app:
+Run the app (recommended: use the venv python to run Streamlit so shebang issues are avoided):
 
 ```bash
-streamlit run app.py
+python -m streamlit run app.py
 ```
+
+By default Streamlit uses port 8501. If port 8501 is already in use, Streamlit will suggest another port (e.g. 8502). You can force a specific port:
+
+```bash
+python -m streamlit run app.py --server.port 8502
+```
+
+Notes:
+- The app ships a `.streamlit/config.toml` file that sets theme and hides stack traces in demo mode. Streamlit will automatically use it.
+- For the hackathon/demo, `LLM_PROVIDER=demo` is the default and requires no API keys. To test live AI providers, add keys to your `.env` and set `LLM_PROVIDER` accordingly (see README sections on AI Provider Configuration).
+
 
 ## AI Provider Configuration
 
