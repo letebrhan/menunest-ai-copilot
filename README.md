@@ -98,6 +98,87 @@ Target customers: Office workers, students, commuters
 Launch goal: Start with a simple menu and test customer interest
 ```
 
+## Vapi / Voice Assistant Integration
+
+This repository is compatible with Vapi-style Function Tools using a single webhook endpoint. The Vapi integration uses a centralized tool-calls webhook endpoint on the backend:
+
+- POST /vapi/tool-calls
+
+If you are wiring the assistant in Vapi, follow the steps in the "Vapi setup" section below.
+
+### Vapi Test Examples (deterministic dates)
+
+Use these future-looking examples when testing bookings/appointments with the Vapi webhook to ensure consistent results across reviewers:
+
+- Valid appointment
+
+```json
+{
+	"preferred_date": "2026-06-01",
+	"preferred_time": "09:30",
+	"service_name": "Carta d'identita",
+	"full_name": "Mario Rossi",
+	"contact": "+39 333 1234567"
+}
+```
+
+- Invalid (Sunday)
+
+```json
+{
+	"preferred_date": "2026-05-31",
+	"preferred_time": "11:30",
+	"service_name": "Carta d'identita",
+	"full_name": "Mario Rossi",
+	"contact": "+39 333 1234567"
+}
+```
+
+- Duplicate appointment (repeat the valid appointment request above)
+
+- Slot conflict (same service/date/time with a different contact)
+
+### Implemented edge cases
+
+This project implements and defends against a number of real-world edge cases:
+
+- Invalid date/time format handling (returns helpful validation errors)
+- Voice-style date normalization (e.g. 20260610, spaced digits) and normalization to YYYY-MM-DD
+- Voice-style time normalization (e.g. 9.3 → 09:30) and HH:MM enforcement
+- Office-hour validation (rejects requests outside allowed hours)
+- Duplicate appointment prevention (same user + same slot)
+- Slot conflict prevention (different user, same slot)
+- Vapi tool-calls webhook compatibility (single endpoint: /vapi/tool-calls)
+- SQLite persistence for appointments (simple durable store)
+
+### Vapi setup (quick)
+
+1. Create three Function Tools in Vapi with these tool names:
+	 - search_municipal_services
+	 - create_appointment
+	 - check_appointment
+
+2. For all three Function Tools, set the Server URL to the same webhook endpoint (your ngrok URL):
+
+```
+https://YOUR-NGROK-URL.ngrok-free.dev/vapi/tool-calls
+```
+
+3. Attach each tool to the assistant and set the transcriber language to Italian.
+
+4. Add the Italian system prompt (see vapi/agent_config.json) to your assistant settings so the assistant behaves in Italian and follows the booking flow.
+
+5. Publish the assistant and keep ngrok running while testing.
+
+6. Manual API endpoints still exist for testing/debugging:
+
+- POST /tools/search-municipal-services
+- POST /tools/create-appointment
+- POST /tools/check-appointment
+
+These endpoints accept the same parameters as the Vapi tool payloads and are useful for manual curl or Swagger testing.
+
+
 Output:
 
 ```text

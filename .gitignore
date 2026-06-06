@@ -12,3 +12,15 @@ htmlcov/
 # IBM Bob temporary files
 bob_sessions/tmp/
 bob_sessions/drafts/
+
+# Project-specific ignores
+.env
+venv/
+venv311/
+__pycache__/
+**/__pycache__/
+*.db
+*.sqlite
+*.sqlite3
+municipality.db
+data/

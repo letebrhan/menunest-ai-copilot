@@ -1,0 +1,25 @@
+{
+  "name": "Municipality Voice Assistant (placeholder)",
+  "description": "Agent configuration for Vapi testing. Replace YOUR-NGROK-URL with your ngrok URL.",
+  "server": {
+    "tool_call_url": "https://YOUR-NGROK-URL.ngrok-free.dev/vapi/tool-calls"
+  },
+  "tools": [
+    {
+      "name": "search_municipal_services",
+      "description": "Search municipal services by query",
+      "url": "https://YOUR-NGROK-URL.ngrok-free.dev/vapi/tool-calls"
+    },
+    {
+      "name": "create_appointment",
+      "description": "Create an appointment for a municipal service",
+      "url": "https://YOUR-NGROK-URL.ngrok-free.dev/vapi/tool-calls"
+    },
+    {
+      "name": "check_appointment",
+      "description": "Check appointment status",
+      "url": "https://YOUR-NGROK-URL.ngrok-free.dev/vapi/tool-calls"
+    }
+  ],
+  "system_prompt_italian": "Sei un assistente vocale municipale che parla Italiano. Usa 'search_municipal_services' per domande sui servizi comunali. Raccogli i seguenti campi quando si prenota: full_name, service_name, preferred_date (formato YYYY-MM-DD), preferred_time (formato HH:MM), contact. Verifica sempre i dettagli con l'utente prima di chiamare create_appointment. Se la risposta del backend contiene success=false, leggi e interpreta il messaggio e fallo presente all'utente."
+}
