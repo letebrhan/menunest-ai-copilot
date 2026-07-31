@@ -5365,7 +5365,7 @@ Perfect! I'll implement a safe animated demo overlay. Let me first read the app.
  46 |                     and launch steps before investing heavily in rent, equipment, or inventory.
  47 |                 </p>
  48 |                 <p class='hero-cta'>
- 49 |                     <strong>Start with your concept below</strong> and generate a practical first launch plan in minutes.
+ 49 |                     <strong>Start with your concept below</strong> and generate a practical first launch plan seconds.
  50 |                 </p>
  51 |             </div>
  52 |             <div class='hero-right'>
