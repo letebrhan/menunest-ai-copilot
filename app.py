@@ -46,7 +46,7 @@ st.markdown(
                     and launch steps before investing heavily in rent, equipment, or inventory.
                 </p>
                 <p class='hero-cta'>
-                    <strong>Start with your concept below</strong> and generate a practical first launch plan seconds.
+                    <strong>Start with your concept below</strong> and generate a practical first launch plan in seconds.
                 </p>
             </div>
             <div class='hero-right'>
